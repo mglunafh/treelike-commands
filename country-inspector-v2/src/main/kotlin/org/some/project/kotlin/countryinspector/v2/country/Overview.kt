@@ -53,7 +53,7 @@ class Overview(val country: Country): Hierarchy {
             throw IllegalArgumentException("Somehow class hierarchy for Overview got hijacked...")
         }
         return when (commandObject) {
-            ExitObject -> CommandAction.Exit("Exiting the Country inspection mode.")
+            ExitObject -> CommandAction.Exit("Exiting the Country Inspection application. Have a nice day!")
             ShowCountryObject -> CommandAction.OK(country.name)
             is HelpObject -> {
                 val message = commandObject.command?.let { "   ${it.commandName} -- ${it.description}" }
@@ -76,7 +76,7 @@ class Overview(val country: Country): Hierarchy {
             override val description: String
         ): Command<Overview> {
 
-            Exit(commandName = "exit", description = "Exits from from the inspection mode."),
+            Exit(commandName = "exit", description = "Closes Country Inspection application."),
             Help(commandName = "help", description = "Shows this help."),
             ShowCountry(commandName = "show", description = "Shows the country to observe."),
             InspectCountry(commandName = "inspect", description = "Sets the country for inspection.");
