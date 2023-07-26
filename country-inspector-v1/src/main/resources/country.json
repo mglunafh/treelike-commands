@@ -1,0 +1,17 @@
+{
+  "name": "Russia",
+  "population": 15000,
+  "headOfState": "Pushkin Alexander",
+  "cities": [
+    {
+      "name": "Moscow",
+      "population": 5000,
+      "mayor": "Ivanov Sergey"
+    },
+    {
+      "name": "Tver",
+      "population": 1000,
+      "mayor": "Tverenko Sergey"
+    }
+  ]
+}
