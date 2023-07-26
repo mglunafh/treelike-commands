@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.some.project.kotlin.countryinspector.v1"
-version = "0.1-SNAPSHOT"
+version = "0.1"
 
 kotlin {
     jvmToolchain {
