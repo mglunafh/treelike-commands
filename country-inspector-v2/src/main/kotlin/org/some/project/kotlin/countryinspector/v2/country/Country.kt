@@ -1,8 +1,8 @@
 package org.some.project.kotlin.countryinspector.v2.country
 
-import org.some.project.kotlin.countryinspector.v2.command.Command
 import org.some.project.kotlin.countryinspector.v2.command.CommandAction
 import org.some.project.kotlin.countryinspector.v2.command.CommandObject
+import org.some.project.kotlin.countryinspector.v2.command.CountryCommand
 import org.some.project.kotlin.countryinspector.v2.command.CountryCommandObject
 import org.some.project.kotlin.countryinspector.v2.command.CountryCommandObject.Companion.BackToOverviewCommandObject
 import org.some.project.kotlin.countryinspector.v2.command.CountryCommandObject.Companion.CountryValueCommandObject
@@ -14,6 +14,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Compan
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
+import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 data class Country(val name: String, val population: Int, val headOfState: String, val cities: List<City>): Hierarchy {
 
@@ -57,35 +58,13 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
         return when (commandObject) {
             BackToOverviewCommandObject -> CommandAction.Back(ancestor, "Switched back to Overview mode.")
             is CountryValueCommandObject -> CommandAction.OK(commandObject.value)
-            is HelpObject -> {
-                val message = commandObject.command?.let { "   ${it.commandName} -- ${it.description}" }
-                    ?: CountryCommand.values().joinToString(separator = "\n") { "   ${it.commandName} -- ${it.description}" }
-                CommandAction.OK(message)
-            }
+            is HelpObject -> createHelpAction<Country, CountryCommand>(commandObject.command)
             is InspectCityCommandObject -> {
                 val cityName = commandObject.cityName
                 cities.firstOrNull { it.name == cityName }
                     ?.let { city -> CommandAction.InspectCity(city) }
                     ?: CommandAction.CityNotFound(cityName)
             }
-        }
-    }
-
-    companion object {
-
-        enum class CountryCommand(
-            override val commandName: String,
-            override val description: String
-        ): Command<Country> {
-
-            CountryName(commandName = "name", description = "Shows the name of the country."),
-            CountryPopulation(commandName = "population", description = " Shows the number of citizens."),
-            HeadOfState(commandName = "head", description = "Tells the state head's name."),
-            Cities(commandName = "cities", description = "Lists the names of the cities."),
-            InspectCity(commandName = "inspect", description = "Sets the city for inspection."),
-            BackToOverview(commandName = "back", description = "Enters back to the Overview mode."),
-            CountryHelp(commandName = "help", description = "Shows this help.")
-
         }
     }
 }

@@ -1,8 +1,8 @@
 package org.some.project.kotlin.countryinspector.v2.country
 
-import org.some.project.kotlin.countryinspector.v2.command.Command
-import org.some.project.kotlin.countryinspector.v2.command.CommandObject
 import org.some.project.kotlin.countryinspector.v2.command.CommandAction
+import org.some.project.kotlin.countryinspector.v2.command.CommandObject
+import org.some.project.kotlin.countryinspector.v2.command.OverviewCommand
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.ExitObject
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.HelpObject
@@ -14,7 +14,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Compan
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
-import java.lang.IllegalArgumentException
+import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 
 class Overview(val country: Country): Hierarchy {
@@ -55,31 +55,13 @@ class Overview(val country: Country): Hierarchy {
         return when (commandObject) {
             ExitObject -> CommandAction.Exit("Exiting the Country Inspection application. Have a nice day!")
             ShowCountryObject -> CommandAction.OK(country.name)
-            is HelpObject -> {
-                val message = commandObject.command?.let { "   ${it.commandName} -- ${it.description}" }
-                    ?: OverviewCommand.values().joinToString(separator = "\n") { "   ${it.commandName} -- ${it.description}" }
-                CommandAction.OK(message)
-            }
+            is HelpObject -> createHelpAction<Overview, OverviewCommand>(commandObject.command)
             is InspectCountryObject -> {
                 if (commandObject.countryName == country.name)
                     CommandAction.InspectCountry(country)
                 else
                     CommandAction.IncorrectCountry(commandObject.countryName)
             }
-        }
-    }
-
-    companion object {
-
-        enum class OverviewCommand(
-            override val commandName: String,
-            override val description: String
-        ): Command<Overview> {
-
-            Exit(commandName = "exit", description = "Closes Country Inspection application."),
-            Help(commandName = "help", description = "Shows this help."),
-            ShowCountry(commandName = "show", description = "Shows the country to observe."),
-            InspectCountry(commandName = "inspect", description = "Sets the country for inspection.");
         }
     }
 }
