@@ -11,6 +11,8 @@ sealed class ParseErrorType {
 
         data class UnrecognizedCommandYet(val commandName: String): ParseErrorType()
 
+        data class MissingCommandAfterPrefix(val prefixName: String): ParseErrorType()
+
         data class UnrecognizedParameter(val commandName: String, val parameterName: String): ParseErrorType()
 
         data class MissingRequiredParameter(val commandName: String): ParseErrorType()

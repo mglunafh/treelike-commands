@@ -9,6 +9,7 @@ import org.some.project.kotlin.countryinspector.v2.command.CountryCommandObject.
 import org.some.project.kotlin.countryinspector.v2.command.CountryCommandObject.Companion.HelpObject
 import org.some.project.kotlin.countryinspector.v2.command.CountryCommandObject.Companion.InspectCityCommandObject
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.ArgumentListEmpty
+import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingCommandAfterPrefix
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingRequiredParameter
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedCommandYet
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
@@ -20,6 +21,8 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
 
     override lateinit var ancestor: Overview
 
+    val commandPrefix = "country"
+
     init {
         cities.forEach { it.ancestor = this }
     }
@@ -27,10 +30,14 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
     override fun parseCommandObject(args: List<String>): ParseResult<Country> {
         if (args.isEmpty()) return ParseError(ArgumentListEmpty)
 
-        val command = CountryCommand.values().firstOrNull { it.commandName == args[0] }
-            ?: return ParseError(UnrecognizedCommandYet(args[0]))
+        val (commandString, firstArg) = when {
+            args[0] != commandPrefix -> Pair(args[0], args.getOrNull(1))
+            args[0] == commandPrefix && args.size == 1 -> return ParseError(MissingCommandAfterPrefix(commandPrefix))
+            else -> Pair(args[1], args.getOrNull(2))
+        }
 
-        val firstArg = args.getOrNull(1)
+        val command = CountryCommand.values().firstOrNull { it.commandName == commandString }
+            ?: return ParseError(UnrecognizedCommandYet(commandString))
 
         if (firstArg in listOf("-h", "--help"))
             return ParseSuccess(HelpObject(command = command))

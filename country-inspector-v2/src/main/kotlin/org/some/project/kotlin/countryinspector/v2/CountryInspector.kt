@@ -2,6 +2,7 @@ package org.some.project.kotlin.countryinspector.v2
 
 import org.some.project.kotlin.countryinspector.v2.command.CommandAction
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.ArgumentListEmpty
+import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingCommandAfterPrefix
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingRequiredParameter
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedCommand
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedCommandYet
@@ -24,18 +25,17 @@ class CountryInspector(overview: Overview) {
 
             when (val parseResult = getParseResult(commandArgs)) {
                 is ParseResult.ParseError -> {
-                    when (val t = parseResult.error) {
+                    when (val err = parseResult.error) {
                         ArgumentListEmpty -> println("Argument list is absent.")
-                        is MissingRequiredParameter -> println("Missing required argument for command '${t.commandName}'.")
-                        is UnrecognizedParameter -> println("Unrecognized parameter '${t.parameterName}' for command '${t.commandName}'.")
-                        is UnrecognizedCommand -> println("Unrecognized command '${t.commandName}'.")
+                        is MissingRequiredParameter -> println("Missing required argument for command '${err.commandName}'.")
+                        is UnrecognizedParameter -> println("Unrecognized parameter '${err.parameterName}' for command '${err.commandName}'.")
+                        is UnrecognizedCommand -> println("Unrecognized command '${err.commandName}'.")
                         is UnrecognizedCommandYet -> throw IllegalStateException("Somehow 'UnrecognizedCommandYet' got returned...")
+                        is MissingCommandAfterPrefix -> println("Missing command for the level '${err.prefixName}'.")
                     }
                 }
                 is ParseResult.ParseSuccess -> {
-                    val action = underInspection.createAction(parseResult.result)
-
-                    when (action) {
+                    when (val action = underInspection.createAction(parseResult.result)) {
                         is CommandAction.Exit ->  {
                             println(action.message)
                             return
