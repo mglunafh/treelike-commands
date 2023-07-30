@@ -50,6 +50,7 @@ object LocalizationHolder {
                 OverviewCommand.Exit -> localized(props, "overview.exit", "overview.exit.desc")
                 OverviewCommand.Help -> localized(props, "overview.help", "overview.help.desc")
                 OverviewCommand.ShowCountry -> localized(props, "overview.show-country", "overview.show-country.desc")
+                OverviewCommand.LoadCountry -> localized(props, "overview.load", "overview.load.desc")
                 OverviewCommand.InspectCountry -> localized(props, "overview.inspect", "overview.inspect.desc")
             }
 

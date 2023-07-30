@@ -13,6 +13,7 @@ sealed class OverviewCommandObject: CommandObject<Overview> {
 
     companion object {
         data class HelpObject(val command: LocalizedCommand?): OverviewCommandObject()
+        data class LoadCountryObject(val filename: String): OverviewCommandObject()
         data class InspectCountryObject(val countryName: String): OverviewCommandObject()
         data object ExitObject: OverviewCommandObject()
         data object ShowCountryObject: OverviewCommandObject()

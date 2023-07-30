@@ -7,6 +7,7 @@ import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.ExitObject
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.HelpObject
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.InspectCountryObject
+import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.LoadCountryObject
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommandObject.Companion.ShowCountryObject
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.ArgumentListEmpty
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingRequiredParameter
@@ -41,10 +42,14 @@ class Overview(val country: Country): Hierarchy {
             OverviewCommand.Help -> ParseSuccess(HelpObject(command = null))
             OverviewCommand.Exit -> ParseSuccess(ExitObject)
             OverviewCommand.ShowCountry -> ParseSuccess(ShowCountryObject)
-            OverviewCommand.InspectCountry -> {
-                firstArg?.let { ParseSuccess(InspectCountryObject(countryName = it)) }
-                    ?: ParseError(MissingRequiredParameter(LocalizationHolder[command].name))
-            }
+
+            OverviewCommand.InspectCountry -> firstArg?.let {
+                    ParseSuccess(InspectCountryObject(countryName = it))
+                } ?: ParseError(MissingRequiredParameter(LocalizationHolder[command].name))
+
+            OverviewCommand.LoadCountry -> firstArg?.let {
+                    ParseSuccess(LoadCountryObject(filename = it))
+                } ?: ParseError(MissingRequiredParameter(LocalizationHolder[command].name))
         }
     }
 
@@ -56,6 +61,7 @@ class Overview(val country: Country): Hierarchy {
             ExitObject -> CommandAction.Exit("Exiting the Country Inspection application. Have a nice day!")
             ShowCountryObject -> CommandAction.OK(country.name)
             is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(Overview::class)
+            is LoadCountryObject -> CommandAction.LoadCountry(commandObject.filename)
             is InspectCountryObject -> {
                 if (commandObject.countryName == country.name)
                     CommandAction.InspectCountry(country)

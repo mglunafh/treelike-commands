@@ -1,0 +1,29 @@
+{
+  "name": "Belarus",
+  "population": 8000,
+  "headOfState": "Grigorovich Stanislav",
+  "cities": [
+    {
+      "name": "Minsk",
+      "population": 2000,
+      "mayor": "Starikovich Ivan",
+      "airports": [
+        {
+          "name": "Minsk National Airport",
+          "shortcut": "MSQ"
+        }
+      ]
+    },
+    {
+      "name": "Vitebsk",
+      "population": 1000,
+      "mayor": "Listovich Petr",
+      "airports": [
+        {
+          "name": "Vitebsk Vostochny Airport",
+          "shortcut": "VTB"
+        }
+      ]
+    }
+  ]
+}

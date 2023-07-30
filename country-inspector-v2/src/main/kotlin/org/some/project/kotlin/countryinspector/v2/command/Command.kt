@@ -8,7 +8,7 @@ import org.some.project.kotlin.countryinspector.v2.country.Overview
 sealed interface Command<out H: Hierarchy>
 
 enum class OverviewCommand: Command<Overview> {
-    Exit, ShowCountry, InspectCountry, Help
+    Exit, LoadCountry, ShowCountry, InspectCountry, Help
 }
 
 enum class CountryCommand: Command<Country> {

@@ -1,5 +1,9 @@
 package org.some.project.kotlin.countryinspector.v2
 
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.some.project.kotlin.countryinspector.v2.command.CommandAction
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.ArgumentListEmpty
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingCommandAfterPrefix
@@ -8,8 +12,11 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Compan
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedCommandYet
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedParameter
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
+import org.some.project.kotlin.countryinspector.v2.country.Country
 import org.some.project.kotlin.countryinspector.v2.country.Hierarchy
 import org.some.project.kotlin.countryinspector.v2.country.Overview
+import java.io.FileInputStream
+import java.io.IOException
 
 class CountryInspector(overview: Overview) {
 
@@ -58,6 +65,21 @@ class CountryInspector(overview: Overview) {
                             underInspection = action.city
                             println(action.message)
                         }
+                        is CommandAction.LoadCountry -> {
+                            try {
+                                val newCountry = FileInputStream(action.filename).use {
+                                    objectMapper.readValue(it, Country::class.java)
+                                }
+                                val overview = Overview(newCountry)
+                                underInspection = overview
+                                println(action.message)
+                            } catch (ex: IOException) {
+                                println("${ex.javaClass}: ${ex.message}")
+                            }
+                            catch (ex: JsonProcessingException) {
+                                println("${ex.javaClass}: ${ex.message}")
+                            }
+                        }
                     }
                 }
             }
@@ -74,5 +96,16 @@ class CountryInspector(overview: Overview) {
             parseResult = tempCommandParser.parseCommandObject(commandArgs)
         }
         return parseResult
+    }
+
+    companion object {
+        val objectMapper: ObjectMapper by lazy {
+            val kotlinModule = KotlinModule.Builder()
+                .configure(KotlinFeature.NullToEmptyCollection, true)
+                .configure(KotlinFeature.NullToEmptyMap, true)
+                .configure(KotlinFeature.StrictNullChecks, true)
+                .build()
+            ObjectMapper().registerModule(kotlinModule)
+        }
     }
 }
