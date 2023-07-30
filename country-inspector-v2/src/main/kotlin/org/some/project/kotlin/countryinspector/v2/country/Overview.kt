@@ -43,7 +43,7 @@ class Overview(val country: Country): Hierarchy {
             OverviewCommand.ShowCountry -> ParseSuccess(ShowCountryObject)
             OverviewCommand.InspectCountry -> {
                 firstArg?.let { ParseSuccess(InspectCountryObject(countryName = it)) }
-                    ?: ParseError(MissingRequiredParameter(command.commandName))
+                    ?: ParseError(MissingRequiredParameter(LocalizationHolder[command].name))
             }
         }
     }

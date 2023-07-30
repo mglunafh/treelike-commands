@@ -54,7 +54,7 @@ data class City(
 
         return AirportDisplayMode.values().firstOrNull { it.mode == firstArg }
             ?.let { displayMode -> ParseSuccess(AirportsCommandObject(displayMode = displayMode)) }
-            ?: ParseError(UnrecognizedParameter(CityCommand.Airports.commandName, firstArg))
+            ?: ParseError(UnrecognizedParameter(LocalizationHolder[CityCommand.Airports].name, firstArg))
     }
 
     override fun createAction(commandObject: CommandObject<Hierarchy>): CommandAction {

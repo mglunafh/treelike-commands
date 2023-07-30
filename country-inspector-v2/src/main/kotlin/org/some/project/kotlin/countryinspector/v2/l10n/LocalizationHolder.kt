@@ -1,8 +1,10 @@
 package org.some.project.kotlin.countryinspector.v2.l10n
 
 import org.some.project.kotlin.countryinspector.v2.command.CityCommand
+import org.some.project.kotlin.countryinspector.v2.command.Command
 import org.some.project.kotlin.countryinspector.v2.command.CountryCommand
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommand
+import org.some.project.kotlin.countryinspector.v2.country.Hierarchy
 import org.some.project.kotlin.countryinspector.v2.localized
 import java.lang.IllegalStateException
 import java.util.Properties
@@ -18,6 +20,12 @@ object LocalizationHolder {
     val countryCommands: MutableMap<String, Pair<CountryCommand, LocalizedCommand>> = mutableMapOf()
 
     val cityCommands: MutableMap<String, Pair<CityCommand, LocalizedCommand>> = mutableMapOf()
+
+    private val generalMap: MutableMap<Command<Hierarchy>, LocalizedCommand> = mutableMapOf()
+
+    internal operator fun get(cmd: Command<Hierarchy>): LocalizedCommand {
+        return generalMap[cmd]!!
+    }
 
     internal fun init(language: Lang) {
         println("Language: '$language'")
@@ -37,27 +45,28 @@ object LocalizationHolder {
     private fun initOverviewCommands(props: Properties) {
         overviewPrefix = props.getProperty("overview.prefix")
 
-        OverviewCommand.values().forEach {
-            val cmd = when (it) {
+        OverviewCommand.values().forEach { command ->
+            val localized = when (command) {
                 OverviewCommand.Exit -> localized(props, "overview.exit", "overview.exit.desc")
                 OverviewCommand.Help -> localized(props, "overview.help", "overview.help.desc")
                 OverviewCommand.ShowCountry -> localized(props, "overview.show-country", "overview.show-country.desc")
                 OverviewCommand.InspectCountry -> localized(props, "overview.inspect", "overview.inspect.desc")
             }
 
-            val alreadyPut = overviewCommands.put(cmd.commandName, Pair(it, cmd))
+            val alreadyPut = overviewCommands.put(localized.name, Pair(command, localized))
             alreadyPut?.let { (prevCmd, _) ->
-                val msg = "Overview group of commands: $prevCmd and $it have the same command '${cmd.commandName}'."
+                val msg = "Overview group of commands: $prevCmd and $command have the same command '${localized.name}'."
                 throw IllegalStateException(msg)
             }
+            generalMap[command] = localized
         }
     }
 
     private fun initCountryCommands(props: Properties) {
         countryPrefix = props.getProperty("country.prefix")
 
-        CountryCommand.values().forEach {
-            val cmd = when (it) {
+        CountryCommand.values().forEach { command ->
+            val localized = when (command) {
                 CountryCommand.CountryName -> localized(props, "country.name", "country.name.desc")
                 CountryCommand.CountryPopulation -> localized(props, "country.population", "country.population.desc")
                 CountryCommand.HeadOfState -> localized(props, "country.head-of-state", "country.head-of-state.desc")
@@ -67,11 +76,12 @@ object LocalizationHolder {
                 CountryCommand.CountryHelp -> localized(props, "country.help", "country.help.desc")
             }
 
-            val alreadyPut = countryCommands.put(cmd.commandName, Pair(it, cmd))
+            val alreadyPut = countryCommands.put(localized.name, Pair(command, localized))
             alreadyPut?.let { (prevCmd, _) ->
-                val msg = "Country group of commands: $prevCmd and $it have the same command '${cmd.commandName}'."
+                val msg = "Country group of commands: $prevCmd and $command have the same command '${localized.name}'."
                 throw IllegalStateException(msg)
             }
+            generalMap[command] = localized
         }
 
     }
@@ -79,8 +89,8 @@ object LocalizationHolder {
     private fun initCityCommands(props: Properties) {
         cityPrefix = props.getProperty("city.prefix")
 
-        CityCommand.values().forEach {
-            val cmd = when (it) {
+        CityCommand.values().forEach { command ->
+            val localized = when (command) {
                 CityCommand.CityName -> localized(props, "city.name", "city.name.desc")
                 CityCommand.CityPopulation -> localized(props, "city.population", "city.population.desc")
                 CityCommand.Mayor -> localized(props, "city.mayor", "city.mayor.desc")
@@ -90,11 +100,12 @@ object LocalizationHolder {
                 CityCommand.CityHelp -> localized(props, "city.help", "city.help.desc")
             }
 
-            val alreadyPut = cityCommands.put(cmd.commandName, Pair(it, cmd))
+            val alreadyPut = cityCommands.put(localized.name, Pair(command, localized))
             alreadyPut?.let { (prevCmd, _) ->
-                val msg = "City group of commands: $prevCmd and $it have the same command '${cmd.commandName}'."
+                val msg = "City group of commands: $prevCmd and $command have the same command '${localized.name}'."
                 throw IllegalStateException(msg)
             }
+            generalMap[command] = localized
         }
     }
 }

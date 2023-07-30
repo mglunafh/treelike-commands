@@ -1,7 +1,8 @@
 package org.some.project.kotlin.countryinspector.v2.l10n
 
-data class LocalizedCommand(val commandName: String, val description: String) {
+data class LocalizedCommand(val name: String, val description: String) {
+
     init {
-        require(commandName.isNotBlank())
+        require(name.isNotBlank())
     }
 }

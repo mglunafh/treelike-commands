@@ -27,4 +27,4 @@ fun <H: Hierarchy> createHelpAction(clazz: KClass<H>): CommandAction {
     return CommandAction.OK(msg)
 }
 
-fun helpFormatting(cmd: LocalizedCommand) = "   ${cmd.commandName} -- ${cmd.description}"
+fun helpFormatting(cmd: LocalizedCommand) = "   ${cmd.name} -- ${cmd.description}"

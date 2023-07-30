@@ -11,6 +11,6 @@ sealed class CommandAction(open val message: String) {
     data class IncorrectCountry(val countryName: String): CommandAction("Wrong country '$countryName', cannot inspect it.")
     data class InspectCountry(val country: Country): CommandAction("Country ${country.name} is set for inspection.")
     data class InspectCity(val city: City): CommandAction("City ${city.name} is set for inspection.")
-    data class CityNotFound(val cityName: String): CommandAction("There is no such city as $cityName.")
+    data class CityNotFound(val cityName: String): CommandAction("There is no such city as '$cityName'.")
     data class Back(val ancestor: Hierarchy, override val message: String): CommandAction(message)
 }

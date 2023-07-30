@@ -52,7 +52,7 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
             CountryCommand.InspectCity -> {
                 firstArg?.let {
                     ParseSuccess(InspectCityCommandObject(cityName = it))
-                } ?: ParseError(MissingRequiredParameter(command.commandName))
+                } ?: ParseError(MissingRequiredParameter(LocalizationHolder[command].name))
             }
         }
     }
