@@ -15,13 +15,12 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Compan
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
+import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
 import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 data class Country(val name: String, val population: Int, val headOfState: String, val cities: List<City>): Hierarchy {
 
     override lateinit var ancestor: Overview
-
-    val commandPrefix = "country"
 
     init {
         cities.forEach { it.ancestor = this }
@@ -30,17 +29,18 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
     override fun parseCommandObject(args: List<String>): ParseResult<Country> {
         if (args.isEmpty()) return ParseError(ArgumentListEmpty)
 
+        val commandPrefix = LocalizationHolder.countryPrefix
         val (commandString, firstArg) = when {
             args[0] != commandPrefix -> Pair(args[0], args.getOrNull(1))
             args[0] == commandPrefix && args.size == 1 -> return ParseError(MissingCommandAfterPrefix(commandPrefix))
             else -> Pair(args[1], args.getOrNull(2))
         }
 
-        val command = CountryCommand.values().firstOrNull { it.commandName == commandString }
+        val (command, l10n) = LocalizationHolder.countryCommands[commandString]
             ?: return ParseError(UnrecognizedCommandYet(commandString))
 
         if (firstArg in listOf("-h", "--help"))
-            return ParseSuccess(HelpObject(command = command))
+            return ParseSuccess(HelpObject(command = l10n))
 
         return when (command) {
             CountryCommand.CountryName -> ParseSuccess(CountryValueCommandObject(name))
@@ -65,7 +65,7 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
         return when (commandObject) {
             BackToOverviewCommandObject -> CommandAction.Back(ancestor, "Switched back to Overview mode.")
             is CountryValueCommandObject -> CommandAction.OK(commandObject.value)
-            is HelpObject -> createHelpAction<Country, CountryCommand>(commandObject.command)
+            is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(Country::class)
             is InspectCityCommandObject -> {
                 val cityName = commandObject.cityName
                 cities.firstOrNull { it.name == cityName }

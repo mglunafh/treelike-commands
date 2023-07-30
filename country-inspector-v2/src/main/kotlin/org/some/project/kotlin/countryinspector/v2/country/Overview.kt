@@ -14,6 +14,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Compan
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
+import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
 import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 
@@ -28,14 +29,13 @@ class Overview(val country: Country): Hierarchy {
     override fun parseCommandObject(args: List<String>): ParseResult<Overview> {
         if (args.isEmpty()) return ParseError(ArgumentListEmpty)
 
-        val command =
-            OverviewCommand.values().firstOrNull { it.commandName == args[0] }
-                ?: return ParseError(UnrecognizedCommand(args[0]))
+        val (command, l10n) = LocalizationHolder.overviewCommands[args[0]]
+            ?: return ParseError(UnrecognizedCommand(args[0]))
 
         val firstArg = args.getOrNull(1)
 
         if (firstArg in listOf("-h", "--help"))
-            return ParseSuccess(HelpObject(command = command))
+            return ParseSuccess(HelpObject(command = l10n))
 
         return when (command) {
             OverviewCommand.Help -> ParseSuccess(HelpObject(command = null))
@@ -55,7 +55,7 @@ class Overview(val country: Country): Hierarchy {
         return when (commandObject) {
             ExitObject -> CommandAction.Exit("Exiting the Country Inspection application. Have a nice day!")
             ShowCountryObject -> CommandAction.OK(country.name)
-            is HelpObject -> createHelpAction<Overview, OverviewCommand>(commandObject.command)
+            is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(Overview::class)
             is InspectCountryObject -> {
                 if (commandObject.countryName == country.name)
                     CommandAction.InspectCountry(country)

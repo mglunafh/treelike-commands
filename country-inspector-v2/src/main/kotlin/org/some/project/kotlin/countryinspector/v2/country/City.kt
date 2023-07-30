@@ -16,6 +16,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
 import org.some.project.kotlin.countryinspector.v2.country.Airport.Companion.AirportDisplayMode
+import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
 import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 data class City(
@@ -27,14 +28,14 @@ data class City(
 
     override lateinit var ancestor: Country
 
-    override fun parseCommandObject(args: List<String>): ParseResult<Hierarchy> {
+    override fun parseCommandObject(args: List<String>): ParseResult<City> {
         if (args.isEmpty()) return ParseError(ArgumentListEmpty)
 
-        val command = CityCommand.values().firstOrNull { it.commandName == args[0] }
+        val (command, l10n) = LocalizationHolder.cityCommands[args[0]]
             ?: return ParseError(UnrecognizedCommandYet(args[0]))
 
         if (args.getOrNull(1) in listOf("-h", "--help"))
-            return ParseSuccess(HelpObject(command = command))
+            return ParseSuccess(HelpObject(command = l10n))
 
         return when (command) {
             CityCommand.CityName -> ParseSuccess(CityValueCommandObject(value = name))
@@ -64,7 +65,7 @@ data class City(
         return when (commandObject) {
             BackToCountryCommandObject -> CommandAction.Back(ancestor, "Switched back to Country mode.")
             is CityValueCommandObject -> CommandAction.OK(commandObject.value)
-            is HelpObject -> createHelpAction<City, CityCommand>(commandObject.command)
+            is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(City::class)
             is AirportsCommandObject -> airportsAction(commandObject)
             NotImplementedYet -> CommandAction.OK("Not implemented yet")
         }
