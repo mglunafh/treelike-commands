@@ -6,7 +6,9 @@ import org.some.project.kotlin.countryinspector.v2.command.CountryCommand
 import org.some.project.kotlin.countryinspector.v2.command.OverviewCommand
 import org.some.project.kotlin.countryinspector.v2.country.Hierarchy
 import org.some.project.kotlin.countryinspector.v2.localized
+import java.io.InputStreamReader
 import java.lang.IllegalStateException
+import java.nio.charset.Charset
 import java.util.Properties
 
 object LocalizationHolder {
@@ -30,11 +32,15 @@ object LocalizationHolder {
     internal fun init(language: Lang) {
         println("Language: '$language'")
 
-        val propertiesFileName = "commands-eng.properties"
+        val propertiesFileName = when (language) {
+            Lang.ENG -> "commands-eng.properties"
+            Lang.RUS -> "commands-rus.properties"
+        }
         val props = Properties()
 
         object {}.javaClass.classLoader.getResourceAsStream(propertiesFileName)
-            ?.let { inputStream -> inputStream.use { props.load(it) } }
+            ?.let { inputStream ->
+                    inputStream.use { InputStreamReader(it, Charset.forName("UTF-8")).use { utf8Stream -> props.load(utf8Stream) } } }
             ?: throw IllegalArgumentException("could not find file with translations: $propertiesFileName")
 
         initOverviewCommands(props)

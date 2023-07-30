@@ -7,7 +7,9 @@
   - Moscow level `country inspect Tver` switches the inspection object to Tver, 
     this doesn't break anything and intuitively happens to work as expected,
     but causes a lot of anxiety.
-- command localization (Add russian / interslavic)
+- command localization
+  - Add russian / interslavic
+  - use resource bundles
 - experimental-branch: remove generic type from `interface CommandObject<H>` and see what happens.
 - history navigation via arrows (another investigation on working with console in character mode)
 - write Postmortem a.k.a. lessons learned
