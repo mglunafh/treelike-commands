@@ -15,6 +15,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.country.Country
 import org.some.project.kotlin.countryinspector.v2.country.Hierarchy
 import org.some.project.kotlin.countryinspector.v2.country.Overview
+import org.some.project.kotlin.countryinspector.v2.exception.IntegrityViolationException
 import java.io.FileInputStream
 import java.io.IOException
 
@@ -37,7 +38,7 @@ class CountryInspector(overview: Overview) {
                         is MissingRequiredParameter -> println("Missing required argument for command '${err.commandName}'.")
                         is UnrecognizedParameter -> println("Unrecognized parameter '${err.parameterName}' for command '${err.commandName}'.")
                         is UnrecognizedCommand -> println("Unrecognized command '${err.commandName}'.")
-                        is UnrecognizedCommandYet -> throw IllegalStateException("Somehow 'UnrecognizedCommandYet' got returned...")
+                        is UnrecognizedCommandYet -> throw IntegrityViolationException("Somehow 'UnrecognizedCommandYet' got returned...")
                         is MissingCommandAfterPrefix -> println("Missing command for the level '${err.prefixName}'.")
                     }
                 }

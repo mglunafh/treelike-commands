@@ -15,6 +15,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Compan
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
+import org.some.project.kotlin.countryinspector.v2.exception.IntegrityViolationException
 import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
 import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
@@ -55,7 +56,7 @@ class Overview(val country: Country): Hierarchy {
 
     override fun createAction(commandObject: CommandObject<Hierarchy>): CommandAction {
         if (commandObject !is OverviewCommandObject) {
-            throw IllegalArgumentException("Somehow class hierarchy for Overview got hijacked...")
+            throw IntegrityViolationException("Somehow class hierarchy for Overview got hijacked...")
         }
         return when (commandObject) {
             ExitObject -> CommandAction.Exit("Exiting the Country Inspection application. Have a nice day!")

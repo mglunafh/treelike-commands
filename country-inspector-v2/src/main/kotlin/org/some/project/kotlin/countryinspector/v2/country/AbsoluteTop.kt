@@ -3,16 +3,17 @@ package org.some.project.kotlin.countryinspector.v2.country
 import org.some.project.kotlin.countryinspector.v2.command.CommandObject
 import org.some.project.kotlin.countryinspector.v2.command.CommandAction
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
+import org.some.project.kotlin.countryinspector.v2.exception.IntegrityViolationException
 
 data object AbsoluteTop: Hierarchy {
     override val ancestor: Hierarchy
-        get() = throw IllegalAccessException("AbsoluteTop: Ancestor not defined")
+        get() = throw IntegrityViolationException("AbsoluteTop: Ancestor not defined")
 
     override fun parseCommandObject(args: List<String>): ParseResult<Hierarchy> {
-        throw IllegalAccessException("AbsoluteTop: commands not defined")
+        throw IntegrityViolationException("AbsoluteTop: commands not defined")
     }
 
     override fun createAction(commandObject: CommandObject<Hierarchy>): CommandAction {
-        throw IllegalAccessException("AbsoluteTop: cannot create any actions")
+        throw IntegrityViolationException("AbsoluteTop: cannot create any actions")
     }
 }
