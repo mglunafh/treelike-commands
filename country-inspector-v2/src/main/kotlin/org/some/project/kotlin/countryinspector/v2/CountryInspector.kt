@@ -30,7 +30,7 @@ class CountryInspector(overview: Overview) {
                 is ParseResult.ParseError -> {
                     when (val err = parseResult.error) {
                         is UnrecognizedCommandYet -> throw IntegrityViolationException("Somehow 'UnrecognizedCommandYet' got returned...")
-                        else -> println(MessageSource.localizeParseError(err))
+                        else -> println("\u001b[31;1m${MessageSource.localizeParseError(err)}\u001b[0m")
                     }
                 }
                 is ParseResult.ParseSuccess -> {
@@ -48,13 +48,13 @@ class CountryInspector(overview: Overview) {
                             underInspection = action.country
                             println(MessageSource.localizeCommandAction(action))
                         }
-                        is CommandAction.Back -> {
-                            underInspection = action.ancestor
-                            println(action.message)
-                        }
                         is CommandAction.InspectCity -> {
                             underInspection = action.city
                             println(MessageSource.localizeCommandAction(action))
+                        }
+                        is CommandAction.Back -> {
+                            underInspection = action.ancestor
+                            println(action.message)
                         }
                         is CommandAction.LoadCountry -> {
                             try {
