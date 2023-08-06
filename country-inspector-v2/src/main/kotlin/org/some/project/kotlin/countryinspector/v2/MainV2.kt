@@ -4,11 +4,15 @@ import org.some.project.kotlin.countryinspector.v2.country.Country
 import org.some.project.kotlin.countryinspector.v2.country.Overview
 import org.some.project.kotlin.countryinspector.v2.l10n.Lang
 import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
+import org.some.project.kotlin.countryinspector.v2.l10n.MessageSource
 
 fun main(args: Array<String>) {
 
-    val langArg = args.getOrNull(0)?.let { if (it in listOf("ru", "rus")) Lang.RUS else Lang.ENG } ?: Lang.ENG
+    val langArg = args.getOrNull(0)?.let {
+        if (it in listOf("ru", "rus")) Lang.RUS else Lang.ENG
+    } ?: Lang.ENG
     LocalizationHolder.init(langArg)
+    MessageSource.init(langArg)
 
     val resourceAsStream = object {}.javaClass.classLoader.getResourceAsStream("country.json")
     val country = CountryInspector.objectMapper.readValue(resourceAsStream, Country::class.java)

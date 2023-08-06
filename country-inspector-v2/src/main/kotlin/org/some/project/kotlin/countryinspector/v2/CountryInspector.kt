@@ -5,17 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.some.project.kotlin.countryinspector.v2.command.CommandAction
-import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.ArgumentListEmpty
-import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingCommandAfterPrefix
-import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.MissingRequiredParameter
-import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedCommand
 import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedCommandYet
-import org.some.project.kotlin.countryinspector.v2.command.ParseErrorType.Companion.UnrecognizedParameter
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.country.Country
 import org.some.project.kotlin.countryinspector.v2.country.Hierarchy
 import org.some.project.kotlin.countryinspector.v2.country.Overview
 import org.some.project.kotlin.countryinspector.v2.exception.IntegrityViolationException
+import org.some.project.kotlin.countryinspector.v2.l10n.MessageSource
 import java.io.FileInputStream
 import java.io.IOException
 
@@ -24,8 +20,7 @@ class CountryInspector(overview: Overview) {
     private var underInspection: Hierarchy = overview
 
     fun run() {
-        println("You've entered Country Overview application.")
-        print("Enter a command:> ")
+        print(MessageSource["greeting"])
 
         while (true) {
             val input = readlnOrNull() ?: continue
@@ -34,37 +29,32 @@ class CountryInspector(overview: Overview) {
             when (val parseResult = getParseResult(commandArgs)) {
                 is ParseResult.ParseError -> {
                     when (val err = parseResult.error) {
-                        ArgumentListEmpty -> println("Argument list is absent.")
-                        is MissingRequiredParameter -> println("Missing required argument for command '${err.commandName}'.")
-                        is UnrecognizedParameter -> println("Unrecognized parameter '${err.parameterName}' for command '${err.commandName}'.")
-                        is UnrecognizedCommand -> println("Unrecognized command '${err.commandName}'.")
                         is UnrecognizedCommandYet -> throw IntegrityViolationException("Somehow 'UnrecognizedCommandYet' got returned...")
-                        is MissingCommandAfterPrefix -> println("Missing command for the level '${err.prefixName}'.")
+                        else -> println(MessageSource.localizeParseError(err))
                     }
                 }
                 is ParseResult.ParseSuccess -> {
                     when (val action = underInspection.createAction(parseResult.result)) {
                         is CommandAction.Exit ->  {
-                            println(action.message)
+                            println(MessageSource.localizeCommandAction(action))
                             return
                         }
                         is CommandAction.OK,
                         is CommandAction.CityNotFound,
                         is CommandAction.IncorrectCountry -> {
-                            println(action.message)
+                            println(MessageSource.localizeCommandAction(action))
                         }
                         is CommandAction.InspectCountry -> {
                             underInspection = action.country
-                            println(action.message)
+                            println(MessageSource.localizeCommandAction(action))
                         }
-
                         is CommandAction.Back -> {
                             underInspection = action.ancestor
                             println(action.message)
                         }
                         is CommandAction.InspectCity -> {
                             underInspection = action.city
-                            println(action.message)
+                            println(MessageSource.localizeCommandAction(action))
                         }
                         is CommandAction.LoadCountry -> {
                             try {
@@ -73,7 +63,7 @@ class CountryInspector(overview: Overview) {
                                 }
                                 val overview = Overview(newCountry)
                                 underInspection = overview
-                                println(action.message)
+                                println(MessageSource.localizeCommandAction(action))
                             } catch (ex: IOException) {
                                 println("${ex.javaClass}: ${ex.message}")
                             }

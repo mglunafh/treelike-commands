@@ -16,6 +16,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseResult
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseError
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
 import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
+import org.some.project.kotlin.countryinspector.v2.l10n.MessageSource
 import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 data class Country(val name: String, val population: Int, val headOfState: String, val cities: List<City>): Hierarchy {
@@ -63,7 +64,7 @@ data class Country(val name: String, val population: Int, val headOfState: Strin
         }
 
         return when (commandObject) {
-            BackToOverviewCommandObject -> CommandAction.Back(ancestor, "Switched back to Overview mode.")
+            BackToOverviewCommandObject -> CommandAction.Back(ancestor, MessageSource["action.back-to-overview"])
             is CountryValueCommandObject -> CommandAction.OK(commandObject.value)
             is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(Country::class)
             is InspectCityCommandObject -> {

@@ -59,7 +59,7 @@ class Overview(val country: Country): Hierarchy {
             throw IntegrityViolationException("Somehow class hierarchy for Overview got hijacked...")
         }
         return when (commandObject) {
-            ExitObject -> CommandAction.Exit("Exiting the Country Inspection application. Have a nice day!")
+            ExitObject -> CommandAction.Exit
             ShowCountryObject -> CommandAction.OK(country.name)
             is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(Overview::class)
             is LoadCountryObject -> CommandAction.LoadCountry(commandObject.filename)

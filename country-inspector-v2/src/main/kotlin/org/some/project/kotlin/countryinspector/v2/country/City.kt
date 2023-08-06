@@ -17,6 +17,7 @@ import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseErro
 import org.some.project.kotlin.countryinspector.v2.command.ParseResult.ParseSuccess
 import org.some.project.kotlin.countryinspector.v2.country.Airport.Companion.AirportDisplayMode
 import org.some.project.kotlin.countryinspector.v2.l10n.LocalizationHolder
+import org.some.project.kotlin.countryinspector.v2.l10n.MessageSource
 import org.some.project.kotlin.countryinspector.v2.util.createHelpAction
 
 data class City(
@@ -63,16 +64,16 @@ data class City(
         }
 
         return when (commandObject) {
-            BackToCountryCommandObject -> CommandAction.Back(ancestor, "Switched back to Country mode.")
+            BackToCountryCommandObject -> CommandAction.Back(ancestor, MessageSource["action.back-to-country"])
             is CityValueCommandObject -> CommandAction.OK(commandObject.value)
             is HelpObject -> commandObject.command?.let { createHelpAction(it) } ?: createHelpAction(City::class)
             is AirportsCommandObject -> airportsAction(commandObject)
-            NotImplementedYet -> CommandAction.OK("Not implemented yet")
+            NotImplementedYet -> CommandAction.OK(MessageSource["action.not-implemented"])
         }
     }
 
     private fun airportsAction(commandObject: AirportsCommandObject): CommandAction {
-        if (airports.isEmpty()) return CommandAction.OK("There are no airports in $name")
+        if (airports.isEmpty()) return CommandAction.OK(MessageSource["action.no-airports"].format(name))
 
         val airportList = when (commandObject.displayMode) {
             AirportDisplayMode.NAME -> airports.joinToString(postfix = ".") { it.name }

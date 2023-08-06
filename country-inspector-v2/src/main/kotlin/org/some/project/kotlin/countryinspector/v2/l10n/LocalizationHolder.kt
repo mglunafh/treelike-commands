@@ -18,9 +18,7 @@ object LocalizationHolder {
     lateinit var cityPrefix: String
 
     val overviewCommands: MutableMap<String, Pair<OverviewCommand, LocalizedCommand>> = mutableMapOf()
-
     val countryCommands: MutableMap<String, Pair<CountryCommand, LocalizedCommand>> = mutableMapOf()
-
     val cityCommands: MutableMap<String, Pair<CityCommand, LocalizedCommand>> = mutableMapOf()
 
     private val generalMap: MutableMap<Command<Hierarchy>, LocalizedCommand> = mutableMapOf()
