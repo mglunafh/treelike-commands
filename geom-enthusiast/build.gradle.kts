@@ -7,7 +7,7 @@ plugins {
 val projectVersion: String by project
 val jacksonVersion: String by project
 
-group = "org.some.project.kotlin.countryinspector.v2"
+group = "org.some.project.kotlin"
 version = projectVersion
 
 dependencies {
@@ -18,5 +18,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("org.some.project.kotlin.countryinspector.v2.MainV2Kt")
+    mainClass.set("org.some.project.kotlin.geometry.GeometryMainKt")
 }

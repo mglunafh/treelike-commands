@@ -1,12 +1,18 @@
 plugins {
-    kotlin("jvm") version "1.9.0" apply false
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    kotlin("jvm") version "1.9.0"
 }
 
 group = "org.some.project.kotlin"
-version = "0.1-SNAPSHOT"
 
 subprojects {
+
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
 
     repositories {
         mavenCentral()
