@@ -6,8 +6,8 @@
 
 ----
 ## Geometry Enthusiast
-- Another project: Create and interact with a list of various geometric objects
-    which can have different characteristics.
+- write down the functional requirements for 2D and 3D figures.
+- think about adding length to the models.
 - Write down the entities required for the implementation based on the Country Inspector Postmortem.
 
 ----
