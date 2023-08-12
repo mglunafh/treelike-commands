@@ -6,8 +6,16 @@
 
 ----
 ## Geometry Enthusiast
-- write down the functional requirements for 2D and 3D figures.
-- think about adding length to the models.
+- think about adding physical parameters to the models:
+  - section length 
+  - area of the 2D figures
+  - volume of the 3D figures
+  - height of the pyramid
+- Ways to show the contents of the figures:
+  - nested tree structure
+  - list of points, sections, 2d figures
+- ways to show the info about hierarchy of the figure, what entities it belongs to.
+- ways to show the properties of the higher-order entities this figure belongs to.
 - Write down the entities required for the implementation based on the Country Inspector Postmortem.
 
 ----

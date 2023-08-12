@@ -10,14 +10,14 @@
    - добавить возможность иметь в названии пробелы (argument parser / tokenizer / whatever)
 3. **Тег**. Строчные буквы латинского алфавита, цифры, дефис.
    - regex `[a-z][a-z0-9\-]*`
-4. **Идентификатор**. Натуральное число, присваиваемое каждому объекту при инициализации.
+4. **Идентификатор**, **ID**. Натуральное число, присваиваемое каждому объекту при инициализации.
    Объекты имеют уникальный идентификатор при каждом запуске программы и могут им однозначно определяться.
    Внутренняя несериализуемая информация, может меняться от запуска к запуску.
 
 ### Команды верхнего уровня
 
-1. list/ls - показывает список ГФ
-2. create/new - создает на выбор одну из доступных ГФ
+1. `list|ls` - показывает список ГФ
+2. `create|new` - создает на выбор одну из доступных ГФ
     1. Точка
     2. Отрезок
     3. Треугольник
@@ -25,9 +25,9 @@
     5. Ромб
     6. Куб
     7. Пирамида (с прямоугольным основанием)
-3. save - сохраняет список ГФ в файл.
-4. load - загружает список ГФ из файла.
-5. inspect - переходит в режим осмотра данной ГФ, на вход передается ID фигуры из списка.
+3. `save` - сохраняет список ГФ в файл.
+4. `load` - загружает список ГФ из файла.
+5. `inspect` - переходит в режим осмотра данной ГФ, на вход передается ID фигуры из списка.
 
 ### Точка
 
@@ -52,6 +52,8 @@
 7. `tag add <list of tags>`
 8. `tag remove <list of tags>`
 9. `back` -- переходит в режим верхнего уровня либо к осмотру той ГФ, из которой был вызван `inspect`.
+10. `hierarchy` -- показывает, частью каких фигур является.
+    - для вершины пирамиды выведет `Point[<id>] <name> <- Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>  <- Triangle[<id>] <name>,  Triangle[<id>] <name>,  Triangle[<id>] <name>, Triangle[<id>] <name> <- Pyramid[<id>] <name>`
 
 Возможные состояния/представления:
 - `Point[1]`
@@ -74,7 +76,7 @@
      причем информация об отрезке будет выделена цветом отрезка, а точки будут своих цветов.
    - если передан параметр `-s|--short`, будет выведено `Section[<id>] <name>`.
    - если передан параметр `-t|--with-tags`, будут выведены теги объектов.
-   - если вызван `show point [<id>|<name>]`, будет выведена информация о точке отрезка
+   - если вызван `show --point [<id>|<name>]`, будет выведена информация о точке отрезка
      с данным именем или ID.
 2. `id` -- выводит ID отрезка.
 3. `name` -- выводит имя отрезка.
@@ -87,6 +89,8 @@
 9. `inspect` -- переходит в режим осмотра данной точки отрезка.
    - `inspect [<id>|<name>]`
 10. `back` -- переходит в режим верхнего уровня либо возвращается к осмотру той ГФ, из который был вызван `inspect`.  
+11. `hierarchy` -- показывает, частью каких фигур является.
+   - для ребра куба выведет `Section[<id>] <name>  <- Rect[<id>] <name>, Rect[<id>] <name> <- Pyramid[<id>] <name>`
 
 Примеры возможных состояний/представлений:
 - `Section[5]`
@@ -105,23 +109,26 @@
 
 Имеет следующие команды:
 1. `show` -- показывает доступную информацию о треугольнике.
-   - Если треугольник дефолтный, выведет `Triangle[<id>] {Section[<id>], Section[<id>], Section[<id>]}`
+   - Если тр-к дефолтный, выведет `Triangle[<id>] {Section[<id>], Section[<id>], Section[<id>]}`
    - В общем случае выведет
      `Triangle[<id>] <name> {Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>}`
    - Если передан параметр `-s|--short`, будет выведено `Triangle[<id>] <name>`
    - Если передан параметр `--all`, будут выведены отрезки с точками
    - Если передан параметр `-t|--with-tags`, будут также выведены теги объектов.
-2. `id` -- выводит ID треугольника.
-3. `name` -- выводит имя треугольника.
-4. `color` -- выводит цвет треугольника.
-5. `tags` -- выводит теги треугольника.
+   - если вызван `show --point [<id>|<name>]`, будет выведена информация о вершине тр-ка с данным именем или ID.
+   - если вызван `show --section [<id>|<name>]`, будет выведет информация о стороне тр-ка с данным именем или ID.
+2. `id` -- выводит ID тр-ка.
+3. `name` -- выводит имя тр-ка.
+4. `color` -- выводит цвет тр-ка.
+5. `tags` -- выводит теги тр-ка.
 6. `tag add <list of tags>`
 7. `tag remove <list of tags>`
-8. `set` -- задает информацию о треугольнике. Принимает на вход от одного до всех параметров (цвет, имя, теги)
+8. `set` -- задает информацию о тр-ке. Принимает на вход от одного до всех параметров (цвет, имя, теги)
    - `set [-n|--name <name>] [-c|--color <color>] [-t|--tags <list of tags>]` -- полный вид команды
-9. `inspect` -- переходит в режим осмотра отрезка или точки данного треугольника.
-   - `inspect [<id>|<name>]`
+9. `inspect [<id>|<name>]` -- переходит в режим осмотра отрезка или точки данного тр-ка.
 10. `back` -- переходит в режим верхнего уровня либо возвращается к осмотру той ГФ, из который был вызван `inspect`.
+11. `hierarchy` -- показывает, частью каких фигур является. 
+    - для грани пирамиды выведет `Triangle[<id>] <name>  <- Pyramid[<id>] <name>`
 
 ### Прямоугольник
 
@@ -134,12 +141,14 @@
 
 Имеет следующие команды:
 1. `show` -- показывает доступную информацию о прямоугольнике.
-   - Если пр-к дефолтный, выведет `Rectangle[<id>] {Section[<id>], Section[<id>], Section[<id>], Section[<id>]}`
+   - Если пр-к дефолтный, выведет `Rect[<id>] {Section[<id>], Section[<id>], Section[<id>], Section[<id>]}`
    - В общем случае выведет
-     `Rectangle[<id>] <name> {Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>}`
-   - Если передан параметр `-s|--short`, будет выведено `Rectangle[<id>] <name>`
+     `Rect[<id>] <name> {Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>}`
+   - Если передан параметр `-s|--short`, будет выведено `Rect[<id>] <name>`
    - Если передан параметр `--all`, будут выведены отрезки с точками
    - Если передан параметр `-t|--with-tags`, будут также выведены теги объектов.
+   - если вызван `show --point [<id>|<name>]`, будет выведена информация о вершине пр-ка с данным именем или ID.
+   - если вызван `show --section [<id>|<name>]`, будет выведет информация о стороне пр-ка с данным именем или ID.
 2. `id` -- выводит ID пр-ка.
 3. `name` -- выводит имя пр-ка.
 4. `color` -- выводит цвет пр-ка.
@@ -148,18 +157,19 @@
 7. `tag remove <list of tags>`
 8. `set` -- задает информацию о прямоугольнике. Принимает на вход от одного до всех параметров (цвет, имя, теги)
    - `set [-n|--name <name>] [-c|--color <color>] [-t|--tags <list of tags>]` -- полный вид команды
-9. `inspect` -- переходит в режим осмотра стороны или вершины прямоугольника.
-   - `inspect [<id>|<name>]`
+9. `inspect [<id>|<name>]` -- переходит в режим осмотра стороны или вершины прямоугольника.
 10. `back` -- переходит в режим верхнего уровня либо возвращается к осмотру той ГФ, из который был вызван `inspect`.
+11. `hierarchy` -- показывает, частью каких фигур является.
+    - для грани куба выведет `Rect[<id>] <name>  <- Cube[<id>] <name>`
 
 Примеры возможных состояний/представлений:
-- `show -s` -- `Rectangle[10]`
-- `show -s` -- `Rectangle[10] "square"`
-- `show` -- `Rectangle[10] "square" {Section[5] "north", Section[6] "west", Section[7] "south", Section[8] "east"}`
-- `show -s -t` -- `Rectangle[9] "square" (ulan-ude, square-of-soviets)`
+- `show -s` -- `Rect[10]`
+- `show -s` -- `Rect[10] "square"`
+- `show` -- `Rect[10] "square" {Section[5] "north", Section[6] "west", Section[7] "south", Section[8] "east"}`
+- `show -s -t` -- `Rect[9] "square" (ulan-ude, square-of-soviets)`
 - `show -t`:
 ```
-Rectangle[9] "square" (ulan-ude, square-of-soviets) {
+Rect[9] "square" (ulan-ude, square-of-soviets) {
    Section[5] "north" (state-archive),
    Section[6] "west" (ministry-of-finance, geo-museum),
    Section[7] "south" (civil-registration, philharmony, baikal-plaza),
@@ -168,7 +178,7 @@ Rectangle[9] "square" (ulan-ude, square-of-soviets) {
 ```
 - `show --all`:
 ```
-Rectangle[9] "square" {
+Rect[9] "square" {
    Section[5] "north" {Point[1] "Russia_Post", Point[2] "FSB"},
    Section[6] "west" {Point[1] "Russia_Post", Point[3] "Theater"},
    Section[7] "south" {Point[3] "Theater", Point[4] "bus-stop"},
@@ -177,10 +187,10 @@ Rectangle[9] "square" {
 ```
 - `show -t --all`:
 ```
-Rectangle[9] "square" (ulan-ude, square-of-soviets) {
+Rect[9] "square" (ulan-ude, square-of-soviets) {
    Section[5] "north" (state-archive) {Point[1] "Russia_Post", Point[2] "FSB"},
    Section[6] "west" (ministry-of-finance, geo-museum) {Point[1] "Russia_Post", Point[3] "Theater" (fountain)},
-   Section[7] "south" (civil-registration, philharmony, baikal-plaza) {Point[3] "Theater" (fountain) , Point[4] "bus-stop"},
+   Section[7] "south" (civil-registration, philharmonia, baikal-plaza) {Point[3] "Theater" (fountain) , Point[4] "bus-stop"},
    Section[8] "east" (administration, lenin-statue) {Point[2] "FSB", Point[4] "bus-stop"}
 } 
 ```
@@ -199,9 +209,11 @@ Rectangle[9] "square" (ulan-ude, square-of-soviets) {
    - Если ромб дефолтный, выведет `Rhombus[<id>] {Section[<id>], Section[<id>], Section[<id>], Section[<id>]}`
    - В общем случае выведет
      `Rhombus[<id>] <name> {Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>, Section[<id>] <name>}`
-   - Если передан параметр `-s|--short`, будет выведено `Rectangle[<id>] <name>`
+   - Если передан параметр `-s|--short`, будет выведено `Rect[<id>] <name>`
    - Если передан параметр `--all`, будут выведены отрезки с точками.
    - Если передан параметр `-t|--with-tags`, будут также выведены теги объектов.
+   - если вызван `show --point [<id>|<name>]`, будет выведена информация о вершине ромба с данным именем или ID.
+   - если вызван `show --section [<id>|<name>]`, будет выведет информация о стороне ромба с данным именем или ID.
 2. `id` -- выводит ID ромба.
 3. `name` -- выводит имя ромба.
 4. `color` -- выводит цвет ромба.
@@ -213,10 +225,60 @@ Rectangle[9] "square" (ulan-ude, square-of-soviets) {
 9. `inspect` -- переходит в режим осмотра стороны или вершины ромба.
    - `inspect [<id>|<name>]`
 10. `back` -- переходит в режим верхнего уровня либо возвращается к осмотру той ГФ, из который был вызван `inspect`.
+11. `hierarchy` -- показывает, частью каких фигур является.
 
 ### Куб
 
-Представляет собой совокупность шести граней-квадратов. В составе куба 8 вершин, 12 ребер, 6 граней.
+Представляет собой совокупность шести квадратных граней. В составе куба 8 вершин, 12 ребер, 6 граней.
+
+- **ID**
+- **цвет**, по умолчанию белый.
+- **имя**, может быть одно, по умолчанию не задано.
+- **теги**, может быть несколько, по умолчанию нет.
+
+Имеет следующие команды:
+
+1. `show` -- показываот доступную информацию о кубе.
+   - если куб дефолтный, выведет `Cube[<id>] {Rect[<id>], Rect[<id>], Rect[<id>], Rect[<id>], Rect[<id>], Rect[<id>]}`
+   - В общем случае выведет куб с ID и именем, а также составные грани с ID и именами. 
+   - Если передан параметр `-s|--short`, будет выведено `Rect[<id>] <name>`.
+   - если передан параметр `-t|--with-tags`, будут выведены теги.
+   - если вызван `show --point [<id>|<name>]`, будет выведена информация о вершине куба с данным именем или ID.
+   - если вызван `show --section [<id>|<name>]`, выведет информацию о ребре куба с данным именем или ID.
+   - если вызван `show --face [<id>|<name>]`, выведет информацию о грани куба с данным именем или ID.
+2. `id` - выводит ID куба.
+3. `name` -- выводит имя куба.
+4. `color` -- выводит цвет куба.
+5. `tags` -- выводит теги куба.
+6. `tag add <list of tags>`
+7. `tag remove <list of tags>`
+8. `set` -- задает информацию о кубе. Принимает на вход от одного до всех параметров (цвет, имя, теги)
+   - `set [-n|--name <name>] [-c|--color <color>] [-t|--tags <list of tags>]` -- полный вид команды
+9. `inspect` -- переходит в режим осмотра составного элемента куба (вершина, ребро или грань).
+   - `inspect [<id>|<name>]`
+10. `back` -- переходит в режим верхнего уровня.
+
+Примеры возможных состояний/представлений:
+
+- `show -s` -- `Cube[30]`
+- `show -s` -- `Cube[30] "some_cube"`
+- `show` -- `Cube[30] "Some_Cube" {Rect[21] "Front", Rect[22] "Back", Rect[23] "Top", Rect[24] "Left", Rect[25] "Bottom",  Rect[26] "Right"}`
+- `show -t`:
+```
+Cube[30] "Refrigerator" (fridge,no-frost) {
+   Rect[21] "Front" (door),
+   Rect[22] "Back" (vapor-chamber),
+   Rect[23] "Top" (nice-hat),
+   Rect[24] "Left" (sun-side,funny-side),
+   Rect[25] "Bottom" (underground),
+   Rect[26] "Right" (kitchen-side)
+}
+```
+
+### Пирамида с прямоугольным основанием
+
+Представляет собой совокупность четырех треугольных граней и прямоугольного основания.
+В пирамиде 5 вершин, 8 ребер, 5 граней.
 
 - **ID**
 - **цвет**, по умолчанию белый.
@@ -226,33 +288,26 @@ Rectangle[9] "square" (ulan-ude, square-of-soviets) {
 Имеет следующие команды:
 
 1. `show`
-2. `id` - выводит ID куба.
-3. `name` -- выводит имя куба.
-4. `color` -- выводит цвет куба.
-5. `tags` -- выводит теги куба.
+   - В общем случае выведет пирамиду с ID и именем, а также составные грани с ID и именами.
+   - Если передан параметр `-s|--short`, будет выведено `Pyramid[<id>] <name>`.
+   - если передан параметр `-t|--with-tags`, будут выведены теги.
+   - если вызван `show --point [<id>|<name>]`, будет выведена информация о вершине пирамиды с данным именем или ID.
+   - если вызван `show --section [<id>|<name>]`, выведет информацию о ребре пирамиды с данным именем или ID.
+   - если вызван `show --face [<id>|<name>]`, выведет информацию о грани пирамиды с данным именем или ID.
+2. `id` - выводит ID пирамиды.
+3. `name` -- выводит имя пирамиды.
+4. `color` -- выводит цвет пирамиды.
+5. `tags` -- выводит теги пирамиды.
 6. `tag add <list of tags>`
 7. `tag remove <list of tags>`
-8. `set` -- задает информацию о кубе. Принимает на вход от одного до всех параметров (цвет, имя, теги)
+8. `set` -- задает информацию о пирамиды. Принимает на вход от одного до всех параметров (цвет, имя, теги)
    - `set [-n|--name <name>] [-c|--color <color>] [-t|--tags <list of tags>]` -- полный вид команды
-9. `inspect` -- переходит в режим осмотра составного элемента куба.
+9. `inspect` -- переходит в режим осмотра составного элемента пирамиды (вершина, ребро или грань).
    - `inspect [<id>|<name>]`
 10. `back` -- переходит в режим верхнего уровня.
 
 Примеры возможных состояний/представлений:
 
-- `show -s` -- `Cube[30]`
-- `show -s` -- `Cube[30] "some_cube" `
-- `show` -- `Cube[30] "Some_Cube" {Rectangle[21] "Front", Rectangle[22] "Back", Rectangle[23] "Top", Rectangle[24] "Left", Rectangle[25] "Bottom",  Rectangle[26] "Right"}`
-- `show -t`:
-```
-Cube[30] "Refrigerator" (fridge,no-frost) {
-   Rectangle[21] "Front" (door),
-   Rectangle[22] "Back" (vapor-chamber),
-   Rectangle[23] "Top" (nice-hat),
-   Rectangle[24] "Left" (sun-side,funny-side),
-   Rectangle[25] "Bottom" (underground),
-   Rectangle[26] "Right" (kitchen-side)
-}
-```
-
-### Пирамида с прямоугольным основанием
+- `show -s` -- `Pyramid[20]`
+- `show -s` -- `Pyramid[20] "Tutankhamun"`
+- `show` -- `Pyramid[20] "Memphis" {Rect[15] "Basement", Triangle[16] "North", Triangle[17] "West", Triangle[18] "South", Triangle[19] "East"}`
