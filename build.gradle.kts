@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm")
 }
 
 group = "org.some.project.kotlin"

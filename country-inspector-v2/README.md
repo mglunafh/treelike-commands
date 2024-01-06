@@ -10,6 +10,6 @@
 
 ---
 - JDK version: `17`
-- Kotlin version: `1.9.0`
+- Kotlin version: `1.9.22`
 - Command `gradle build` should do the magic, after that the executable jar
   could be found on `build/libs/country-inspector-v2-<version>-all.jar`.
