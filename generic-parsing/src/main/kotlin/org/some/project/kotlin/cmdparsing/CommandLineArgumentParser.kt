@@ -26,44 +26,52 @@ object CommandLineArgumentParser {
             val optionName = paramDefinition.name
             val optionType = paramDefinition.type
             val arity = paramDefinition.arity
+            val delimiter = paramDefinition.withDelimiter
 
             val value = options[optionName]
-            if (value == null) {
-                if (paramDefinition.required) {
+
+            when {
+                value == null && paramDefinition.required ->   {
                     errors.add(RequiredParameterNotSet(commandName, optionName))
                 }
-                continue
-            }
-            if (optionType == Boolean::class) {
-                if (value is SwitchValue) {
-                    resultMap[optionName] = value.switch
-                } else {
-                    errors.add(SwitchValueExpected(commandName, optionName))
+
+                value == null -> {
+                    continue
                 }
-            } else if (arity == 1) {
-                val delimiter = paramDefinition.withDelimiter
-                if (delimiter != null) {
+
+                optionType == Boolean::class -> {
+                    if (value is SwitchValue) {
+                        resultMap[optionName] = value.switch
+                    } else {
+                        errors.add(SwitchValueExpected(commandName, optionName))
+                    }
+                }
+
+                arity == 1 && delimiter != null -> {
                     val convertedValues = convertListOfValues(value, delimiter, optionType)
                     if (convertedValues.isSuccessful) {
                         resultMap[optionName] = convertedValues.result
                     } else {
                         errors.add(conversionError(convertedValues.error, commandName, optionName, optionType))
                     }
-                } else {
+                }
+
+                arity == 1 -> {
                     val convertedValue = convertSingleValue(value, optionType)
                     if (convertedValue.isSuccessful) {
                         resultMap[optionName] = optionType.cast(convertedValue.result)
                     } else {
                         errors.add(conversionError(convertedValue.error, commandName, optionName, optionType))
-                        continue
                     }
                 }
-            } else if (arity > 1) {
-                val convertedValues = convertListOfValues(value, optionType)
-                if (convertedValues.isSuccessful) {
-                    resultMap[optionName] = convertedValues.result
-                } else {
-                    errors.add(conversionError(convertedValues.error, commandName, optionName, optionType))
+
+                arity > 1 -> {
+                    val convertedValues = convertListOfValues(value, optionType)
+                    if (convertedValues.isSuccessful) {
+                        resultMap[optionName] = convertedValues.result
+                    } else {
+                        errors.add(conversionError(convertedValues.error, commandName, optionName, optionType))
+                    }
                 }
             }
         }
@@ -286,11 +294,7 @@ object CommandLineArgumentParser {
     }
 
     private fun createFlags(flagDefinitions: List<ParameterDefinition<out Any>>): Map<String, ParameterDefinition<out Any>> {
-        val flags = mutableMapOf<String, ParameterDefinition<out Any>>()
-        for (param in flagDefinitions) {
-            flags["--${param.name}"] = param
-        }
-        return flags.toMap()
+        return flagDefinitions.associateBy { "--${it.name}" }
     }
 
     private enum class StateMachine {
