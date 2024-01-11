@@ -24,3 +24,8 @@
   like dashed parameters and arguments with spaces. Additional materials:
   - https://yetanotherchris.dev/csharp/command-line-arguments-parser/
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
+
+- CommandObjectFactory:
+  - default values
+  - function `parsePositional` returns `ParseResult` 
+  - merge parsing for positional and optional args
