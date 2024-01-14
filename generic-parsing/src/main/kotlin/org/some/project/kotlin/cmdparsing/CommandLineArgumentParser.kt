@@ -9,14 +9,12 @@ import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
 
-data class ParseObject(val positionalArguments: List<String>, val options: Map<String, OptionValue>)
-
 object CommandLineArgumentParser {
 
     fun validateAndConvertParseResults(
         commandDefinition: CommandDefinition,
-        parseObject: ParseObject
-    ): ParseResult<Map<String, Any>> {
+        parseObject: TokenizedParseObject
+    ): ParseResult<ValueParseObject> {
         val options = parseObject.options
         val commandName = commandDefinition.commandName
         val resultMap = mutableMapOf<String, Any>()
@@ -76,7 +74,7 @@ object CommandLineArgumentParser {
             }
         }
         return when {
-            errors.isEmpty() -> ParseSuccess(resultMap)
+            errors.isEmpty() -> ParseSuccess(ValueParseObject(parseObject.positionalArguments, resultMap))
             errors.size == 1 -> ParseError(errors[0])
             else -> ParseError(CompositeError(errors))
         }
@@ -133,11 +131,119 @@ object CommandLineArgumentParser {
         return mapValues(value.list, converter)
     }
 
+    fun parse(argLine: String, commandDefinition: CommandDefinition): ParseResult<TokenizedParseObject> {
+        val commandName = commandDefinition.commandName
+        val flags = createFlags(commandDefinition.paramDefinitions)
+        val args = Tokenizer.tokenize(argLine)
+
+        var currState = StateMachine.INIT
+        var currOption: ParameterDefinition<out Any>? = null
+
+        var flagArgsParsed = 0
+        var currListOfFlagArgs: MutableList<String>? = null
+
+        val posArgsList = mutableListOf<String>()
+        val parsedObjects = mutableMapOf<String, OptionValue>()
+
+        for (arg in args) {
+            when (currState) {
+                StateMachine.INIT -> {
+                    currState = if (commandName == arg)
+                        StateMachine.COMMAND
+                    else
+                        return ParseError(WrongCommand(commandName, arg))
+                }
+
+                StateMachine.COMMAND -> {
+                    val flag = flags[arg]
+
+                    when {
+                        flag == null -> {
+                            if (posArgsList.size < commandDefinition.positionalArguments) {
+                                posArgsList.add(arg)
+                            } else if (arg.startsWith("--")) {
+                                return ParseError(UnrecognizedFlag(commandName, arg))
+                            } else {
+                                return ParseError(TooManyArguments(commandName, commandDefinition.positionalArguments))
+                            }
+                        }
+                        flag.type == Boolean::class -> {
+                            parsedObjects[flag.name] = SwitchValue()
+                        }
+                        flag.arity == 0 -> {
+                            throw IllegalStateException("Only boolean switches are allowed to have 0 arity.")
+                        }
+                        flag.arity == 1 -> {
+                            currState = StateMachine.UNARY_FLAG
+                            currOption = flag
+                        }
+                        else -> {
+                            currState = StateMachine.LONG_FLAG
+                            currOption = flag
+                            flagArgsParsed = 0
+                            currListOfFlagArgs = mutableListOf()
+                        }
+                    }
+                }
+
+                StateMachine.UNARY_FLAG -> {
+                    requireNotNull(currOption) {
+                        "State $currState requires an option to be present"
+                    }
+                    require(currOption.arity == 1) {
+                        "State $currState requires option to be unary, got $currOption with arity ${currOption!!.arity} instead."
+                    }
+                    val possibleFlag = flags[arg]
+                    if (possibleFlag != null) {
+                        return ParseError(MissingParameterValue(commandName, currOption.name))
+                    }
+
+                    parsedObjects[currOption.name] = StringValue(arg)
+                    currState = StateMachine.COMMAND
+                    currOption = null
+                }
+
+                StateMachine.LONG_FLAG -> {
+                    requireNotNull(currOption) {
+                        "State $currState requires an option to be present"
+                    }
+                    requireNotNull(currListOfFlagArgs) {
+                        "State $currState requires a list of args to be already initialized"
+                    }
+                    require(flagArgsParsed < currOption.arity) {
+                        "For some reason flagArgsParsed ($flagArgsParsed) got bigger than current option arity (${currOption!!.arity})"
+                    }
+                    currListOfFlagArgs.add(arg)
+                    flagArgsParsed++
+                    if (flagArgsParsed == currOption.arity) {
+                        parsedObjects[currOption.name] = ListStringValue(currListOfFlagArgs.toList())
+                        currListOfFlagArgs = null
+                        currState = StateMachine.COMMAND
+                        currOption = null
+                    }
+                }
+            }
+        }
+
+        return when (currState) {
+            StateMachine.INIT -> ParseError(EmptyArguments)
+            StateMachine.COMMAND -> {
+                if (posArgsList.size >= commandDefinition.requiredPositionalArguments) {
+                    ParseSuccess(TokenizedParseObject(posArgsList.toList(), parsedObjects.toMap()))
+                } else {
+                    ParseError(TooFewRequiredArguments(commandName, commandDefinition.requiredPositionalArguments, posArgsList.size))
+                }
+            }
+            StateMachine.UNARY_FLAG -> ParseError(MissingParameterValue(commandName, currOption!!.name))
+            StateMachine.LONG_FLAG -> ParseError(MissingParameters(commandName, currOption!!.name))
+        }
+    }
+
     fun parseOptional(
         argLine: String,
         commandName: String,
         definitions: List<ParameterDefinition<out Any>>
-    ): ParseResult<ParseObject> {
+    ): ParseResult<TokenizedParseObject> {
         val flags = createFlags(definitions)
         val args = Tokenizer.tokenize(argLine)
 
@@ -226,13 +332,13 @@ object CommandLineArgumentParser {
 
         return when (currState) {
             StateMachine.INIT -> ParseError(EmptyArguments)
-            StateMachine.COMMAND -> ParseSuccess(ParseObject(listOf(), parsedObjects.toMap()))
+            StateMachine.COMMAND -> ParseSuccess(TokenizedParseObject(listOf(), parsedObjects.toMap()))
             StateMachine.UNARY_FLAG -> ParseError(MissingParameterValue(commandName, currOption!!.name))
             StateMachine.LONG_FLAG -> ParseError(MissingParameters(commandName, currOption!!.name))
         }
     }
 
-    fun parsePositional(argLine: String, commandName: String, posArgs: Int, reqPosArgs: Int): ParseObject? {
+    fun parsePositional(argLine: String, commandName: String, posArgs: Int, reqPosArgs: Int): ParseResult<TokenizedParseObject> {
         require(posArgs > 0) { "The number of positional arguments must be positive" }
         require(reqPosArgs <= posArgs) {
             "The number of required positional arguments($reqPosArgs) " +
@@ -249,12 +355,7 @@ object CommandLineArgumentParser {
         for (arg in args) {
             when (state) {
                 StateMachine.INIT -> {
-                    if (commandName == arg) {
-                        state = StateMachine.COMMAND
-                    } else {
-                        println("Wrong command")
-                        return null
-                    }
+                    state = if (commandName == arg) StateMachine.COMMAND else return ParseError(WrongCommand(commandName, arg))
                 }
 
                 StateMachine.COMMAND -> {
@@ -262,8 +363,7 @@ object CommandLineArgumentParser {
                         posArgsList.add(arg)
                         argsParsed++
                     } else {
-                        println("Too many arguments, expected $posArgs at most")
-                        return null
+                        return ParseError(TooManyArguments(commandName, posArgs))
                     }
                 }
 
@@ -271,12 +371,10 @@ object CommandLineArgumentParser {
             }
         }
 
-        println("Parsed $argsParsed arguments")
         return if (argsParsed >= reqPosArgs) {
-            ParseObject(posArgsList.toList(), mapOf())
+            ParseSuccess(TokenizedParseObject(posArgsList.toList(), mapOf()))
         } else {
-            println("Too few arguments ($argsParsed) have been passed to the command '$commandName', it requires at least $reqPosArgs.")
-            null
+            ParseError(TooFewRequiredArguments(commandName, reqPosArgs, argsParsed))
         }
     }
 

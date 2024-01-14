@@ -6,7 +6,7 @@ data class CommandDefinition(
     val commandName: String,
     val positionalArguments: Int,
     val requiredPositionalArguments: Int,
-    val paramDefinitions: List<ParameterDefinition<out Any>>
+    val paramDefinitions: List<ParameterDefinition<out Any>> = listOf()
 )
 
 open class ParameterDefinition<T : Any>(
@@ -37,6 +37,13 @@ data class IntFlagDefinition(
     override val default: Int? = null,
     override val withDelimiter: String? = null
 ) : ParameterDefinition<Int>(name, Int::class, required = required, default = default, withDelimiter = withDelimiter)
+
+data class DoubleFlagDefinition(
+    override val name: String,
+    override val required: Boolean = false,
+    override val default: Double? = null,
+    override val withDelimiter: String? = null
+) : ParameterDefinition<Double>(name, Double::class, required = required, default = default, withDelimiter = withDelimiter)
 
 data class StringFlagDefinition(
     override val name: String,

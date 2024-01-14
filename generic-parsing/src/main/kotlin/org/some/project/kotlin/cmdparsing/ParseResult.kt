@@ -32,6 +32,11 @@ data object EmptyArguments : GenericParseError()
 
 data class WrongCommand(val expected: String, val actual: String) : GenericParseError()
 
+data class TooManyArguments(val command: String, val argCount: Int) : GenericParseError()
+
+data class TooFewRequiredArguments(val command: String, val requiredArgCount: Int, val actualArgCount: Int) :
+    GenericParseError()
+
 data class UnrecognizedFlag(val command: String, val flagName: String) : GenericParseError()
 
 data class MissingParameterValue(val command: String, val paramName: String) : GenericParseError()

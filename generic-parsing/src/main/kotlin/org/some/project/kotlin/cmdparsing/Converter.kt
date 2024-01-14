@@ -5,7 +5,7 @@ import kotlin.reflect.safeCast
 
 object Converter {
 
-    private val standardConversionList: MutableList<ConversionRecord<*>> = mutableListOf(
+    private val standardConversionList: MutableList<ConversionRecord<out Any>> = mutableListOf(
         ConversionRecord(String::class) { it },
         ConversionRecord(Int::class) { it.toIntOrNull() },
         ConversionRecord(Float::class) { it.toFloatOrNull() },
@@ -14,7 +14,10 @@ object Converter {
     )
 
     fun <T : Any> getConverter(type: KClass<T>): ConvertibleTo<T>? {
-        return standardConversionList.firstOrNull { it.type == type }?.converter as ConvertibleTo<T>?
+        return standardConversionList
+            .firstOrNull { it.type == type }?.let {
+                @Suppress("UNCHECKED_CAST") (it as ConversionRecord<T>)
+            }?.converter
     }
 
     fun <T: Any> registerConverter(type: KClass<T>, converter: ConvertibleTo<T>) {

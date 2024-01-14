@@ -26,5 +26,8 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - function `parsePositional` returns `ParseResult` 
-  - merge parsing for positional and optional args
+  - Add some methods to the ValueParseObject for convenient value retrieving
+  - remove obsolete methods from the CommandLineArgumentParser
+  - add some javadoc ValueParseObject if it would help retrieving values
+  - think about positional arguments which currently do not support type conversions
+  - think more about validation

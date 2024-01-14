@@ -39,7 +39,8 @@ data class StrictSetterCommand(
             )
         )
 
-        fun parse(dictionary: Map<String, Any>): StrictSetterCommand {
+        fun parse(values: ValueParseObject): StrictSetterCommand {
+            val dictionary = values.options
             val id = dictionary[idDefinition.name] as Int
             val name = dictionary[nameDefinition.name] as String
             val surname = dictionary[surnameDefinition.name] as String?

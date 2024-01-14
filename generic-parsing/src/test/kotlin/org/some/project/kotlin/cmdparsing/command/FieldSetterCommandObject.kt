@@ -30,7 +30,8 @@ data class FieldSetterCommandObject(
             )
         )
 
-        fun parse(dictionary: Map<String, Any>): FieldSetterCommandObject {
+        fun parse(values: ValueParseObject): FieldSetterCommandObject {
+            val dictionary = values.options
             val id = dictionary["id"] as Int?
             val name = dictionary["name"] as String?
             val color = dictionary["color"] as Color

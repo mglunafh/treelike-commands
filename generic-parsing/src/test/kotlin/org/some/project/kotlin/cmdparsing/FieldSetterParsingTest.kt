@@ -16,7 +16,7 @@ class FieldSetterParsingTest {
         val line = pair.first
         val expected = pair.second
 
-        val parseResult = CommandLineArgumentParser.parseOptional(line, COMMAND_NAME, COMMAND_DEFINITION.paramDefinitions)
+        val parseResult = CommandLineArgumentParser.parse(line, COMMAND_DEFINITION)
         require(parseResult is ParseResult.ParseSuccess)
         val validationResult =
             CommandLineArgumentParser.validateAndConvertParseResults(COMMAND_DEFINITION, parseResult.result)
@@ -32,7 +32,7 @@ class FieldSetterParsingTest {
         val line = pair.first
         val expectedError = pair.second
 
-        val parseResult = CommandLineArgumentParser.parseOptional(line, COMMAND_NAME, COMMAND_DEFINITION.paramDefinitions)
+        val parseResult = CommandLineArgumentParser.parse(line, COMMAND_DEFINITION)
         require(parseResult is ParseResult.ParseError)
         assertEquals(expectedError, parseResult.error)
     }
@@ -43,7 +43,7 @@ class FieldSetterParsingTest {
         val line = pair.first
         val expectedError = pair.second
 
-        val parseResult = CommandLineArgumentParser.parseOptional(line, COMMAND_NAME, COMMAND_DEFINITION.paramDefinitions)
+        val parseResult = CommandLineArgumentParser.parse(line, COMMAND_DEFINITION)
         require(parseResult is ParseResult.ParseSuccess)
         val validationResult =
             CommandLineArgumentParser.validateAndConvertParseResults(COMMAND_DEFINITION, parseResult.result)
