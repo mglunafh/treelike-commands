@@ -5,6 +5,7 @@ import org.some.project.kotlin.cmdparsing.*
 data class StrictSetterCommand(
     val id: Int,
     val name: String,
+    val age: Int,
     val surname: String? = null,
     val height: Double? = null,
     val color: Color? = null,
@@ -17,6 +18,7 @@ data class StrictSetterCommand(
         private val idDefinition = IntFlagDefinition("id", required = true)
         private val nameDefinition = StringFlagDefinition("name", required = true)
         private val surnameDefinition = StringFlagDefinition("surname")
+        private val ageDefinition = IntFlagDefinition("age", default = 18)
         private val heightDefinition = ParameterDefinition("height", Double::class)
         private val colorDefinition = FlagDefinition("color", Color::class)
         private val readOnlyDefinition = BooleanSwitchDefinition("read-only")
@@ -27,6 +29,7 @@ data class StrictSetterCommand(
             "set", 0, 0, listOf(
                 idDefinition,
                 nameDefinition,
+                ageDefinition,
                 surnameDefinition,
                 heightDefinition,
                 colorDefinition,
@@ -40,6 +43,7 @@ data class StrictSetterCommand(
             val id = dictionary[idDefinition.name] as Int
             val name = dictionary[nameDefinition.name] as String
             val surname = dictionary[surnameDefinition.name] as String?
+            val age = dictionary[ageDefinition.name] as Int
             val height = dictionary[heightDefinition.name] as Double?
             val color = dictionary[colorDefinition.name] as Color?
             val readonly = dictionary[readOnlyDefinition.name] as Boolean?
@@ -49,6 +53,7 @@ data class StrictSetterCommand(
             return StrictSetterCommand(
                 id,
                 name,
+                age,
                 surname = surname,
                 height = height,
                 color = color,

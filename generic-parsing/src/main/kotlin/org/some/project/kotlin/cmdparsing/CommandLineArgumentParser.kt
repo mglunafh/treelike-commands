@@ -31,12 +31,12 @@ object CommandLineArgumentParser {
             val value = options[optionName]
 
             when {
-                value == null && paramDefinition.required ->   {
+                value == null && paramDefinition.required && paramDefinition.default == null -> {
                     errors.add(RequiredParameterNotSet(commandName, optionName))
                 }
 
                 value == null -> {
-                    continue
+                    paramDefinition.default?.let { resultMap[optionName] = it }
                 }
 
                 optionType == Boolean::class -> {

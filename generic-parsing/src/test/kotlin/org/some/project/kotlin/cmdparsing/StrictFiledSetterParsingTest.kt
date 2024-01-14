@@ -66,20 +66,21 @@ class StrictFiledSetterParsingTest {
         @JvmStatic
         fun positiveCases(): List<Pair<String, StrictSetterCommand>> {
             return listOf(
-                "set --id  14 --name Goobis" to StrictSetterCommand(14, "Goobis"),
-                "set --id 14 --name Goobis --id 15 --read-only" to StrictSetterCommand(15, "Goobis", readOnly = true),
-                "set --id 14 --name Goobis --color white" to StrictSetterCommand(14, "Goobis", color = Color.WHITE),
+                "set --id  14 --name Goobis" to StrictSetterCommand(14, "Goobis", 18),
+                "set --id 14 --name Goobis --id 15 --read-only" to StrictSetterCommand(15, "Goobis", 18, readOnly = true),
+                "set --id 14 --name Goobis --color white" to StrictSetterCommand(14, "Goobis", 18, color = Color.WHITE),
+                "set --id 14 --name Goobis --age 10 --color white" to StrictSetterCommand(14, "Goobis", 10, color = Color.WHITE),
                 "set --id 14 --name Goobis --surname Kazakh --id 15 --read-only" to
-                        StrictSetterCommand(15, "Goobis", surname="Kazakh", readOnly = true),
-                "set --id 14 --name Goobis  --height 3.14" to StrictSetterCommand(14, "Goobis", height = 3.14),
-                "set --id 14 --name Goobis --surname Kazakh --height 3.14" to
-                        StrictSetterCommand(14, "Goobis", surname="Kazakh", height = 3.14),
+                        StrictSetterCommand(15, "Goobis", 18, surname="Kazakh", readOnly = true),
+                "set --id 14 --name Goobis  --height 3.14" to StrictSetterCommand(14, "Goobis", 18, height = 3.14),
+                "set --id 14 --name Goobis --age 10 --surname Kazakh --height 3.14" to
+                        StrictSetterCommand(14, "Goobis", 10, surname="Kazakh", height = 3.14),
                 "set --id 14 --name Goobis --color green --tag pook,guke" to
-                        StrictSetterCommand(14, "Goobis", color = Color.GREEN, tags = listOf(Tag("pook"), Tag("guke"))),
+                        StrictSetterCommand(14, "Goobis", 18, color = Color.GREEN, tags = listOf(Tag("pook"), Tag("guke"))),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only" to
-                        StrictSetterCommand(14, "Goobis", color = Color.GREEN, readOnly = true, tags = listOf(Tag("pook"), Tag("guke"))),
-                "set --id 14 --name Goobis --color green --tag pook,guke --read-only --person Anton Sergeev" to
-                        StrictSetterCommand(14, "Goobis", color = Color.GREEN, readOnly = true, tags = listOf(Tag("pook"), Tag("guke")), person = listOf("Anton", "Sergeev"))
+                        StrictSetterCommand(14, "Goobis", 18, color = Color.GREEN, readOnly = true, tags = listOf(Tag("pook"), Tag("guke"))),
+                "set --id 14 --name Goobis --age 10 --color green --tag pook,guke --read-only --person Anton Sergeev" to
+                        StrictSetterCommand(14, "Goobis", 10, color = Color.GREEN, readOnly = true, tags = listOf(Tag("pook"), Tag("guke")), person = listOf("Anton", "Sergeev"))
             )
         }
 

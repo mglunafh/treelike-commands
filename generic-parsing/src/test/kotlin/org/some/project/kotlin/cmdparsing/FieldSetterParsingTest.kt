@@ -70,16 +70,16 @@ class FieldSetterParsingTest {
         @JvmStatic
         fun positiveCases(): List<Pair<String, FieldSetterCommandObject>> {
             return listOf(
-                "set --id  14 --name Goobis" to FieldSetterCommandObject(14, "Goobis"),
-                "set --read-only" to  FieldSetterCommandObject(null, null, readOnly = true),
-                "set --id 14 --name Goobis --id 15 --read-only" to FieldSetterCommandObject(15, "Goobis", readOnly = true),
-                "set --id 14 --name Goobis --color white" to FieldSetterCommandObject(14, "Goobis", color = Color.WHITE),
+                "set --id  14 --name Goobis" to FieldSetterCommandObject(14, "Goobis", Color.WHITE),
+                "set --read-only" to  FieldSetterCommandObject(null, null, Color.WHITE, readOnly = true),
+                "set --id 14 --name Goobis --id 15 --read-only" to FieldSetterCommandObject(15, "Goobis", Color.WHITE, readOnly = true),
+                "set --id 14 --name Goobis --color blue" to FieldSetterCommandObject(14, "Goobis", color = Color.BLUE),
                 "set --id 14 --name Goobis --color green --tag pook,guke" to
                         FieldSetterCommandObject(14, "Goobis", color = Color.GREEN, tags = listOf(Tag("pook"), Tag("guke"))),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only" to
                         FieldSetterCommandObject(14, "Goobis", color = Color.GREEN, readOnly = true, tags = listOf(Tag("pook"), Tag("guke"))),
-                "set --id 14 --name Goobis --color green --tag pook,guke --read-only --person Anton Sergeev" to
-                        FieldSetterCommandObject(14, "Goobis", color = Color.GREEN, readOnly = true, tags = listOf(Tag("pook"), Tag("guke")), person = Pair("Anton", "Sergeev"))
+                "set --id 14 --name Goobis --color white --tag pook,guke --read-only --person Anton Sergeev" to
+                        FieldSetterCommandObject(14, "Goobis", color = Color.WHITE, readOnly = true, tags = listOf(Tag("pook"), Tag("guke")), person = Pair("Anton", "Sergeev"))
             )
         }
 
