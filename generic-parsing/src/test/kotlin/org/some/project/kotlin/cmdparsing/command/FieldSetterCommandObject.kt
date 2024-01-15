@@ -1,7 +1,6 @@
 package org.some.project.kotlin.cmdparsing.command
 
 import org.some.project.kotlin.cmdparsing.*
-import org.some.project.kotlin.cmdparsing.Converter.castList
 
 data class FieldSetterCommandObject(
     val id: Int?,
@@ -31,14 +30,12 @@ data class FieldSetterCommandObject(
         )
 
         fun parse(values: ValueParseObject): FieldSetterCommandObject {
-            val dictionary = values.options
-            val id = dictionary["id"] as Int?
-            val name = dictionary["name"] as String?
-            val color = dictionary["color"] as Color
-            val readonly = dictionary["read-only"] as Boolean?
-            val tags = castList(dictionary["tag"], Tag::class)
-            val personList = castList(dictionary["person"], String::class)
-            val person = personList ?.let { Pair(it[0], it[1]) }
+            val id = values.getOrNull<Int>("id")
+            val name = values.getOrNull<String>("name")
+            val color = values.get<Color>("color")
+            val readonly = values.getOrNull<Boolean>("read-only")
+            val tags = values.getCollectionOrNull<Tag>("tag")
+            val person = values.getCollectionOrNull<String>("person")?.let { Pair(it[0], it[1]) }
 
             return FieldSetterCommandObject(id, name, color, tags, readonly, person)
         }

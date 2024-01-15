@@ -24,17 +24,16 @@ data class PersonObject(
 
         fun parse(values: ValueParseObject): PersonObject {
             val posArgs = values.positionalArguments
-            val dictionary = values.options
             val (name, middleName, surname ) = when {
                 posArgs.size == 2 -> Triple(posArgs[0], null, posArgs[1])
                 posArgs.size == 3 -> Triple(posArgs[0], posArgs[1], posArgs[2])
                 else -> throw IllegalArgumentException("Positional args should 2 or 3 values, got these instead: $posArgs")
             }
 
-            val age = dictionary[defAge.name] as Int
-            val hairColor = dictionary[defHairColor.name] as Color?
-            val kids = Converter.castList(dictionary[defKids.name], String::class) ?: listOf()
-            val coordinate = Converter.castList(dictionary[defCoord.name], Double::class) ?.let { Pair(it[0], it[1]) }
+            val age = values.get(defAge)
+            val hairColor = values.getNullable(defHairColor)
+            val kids = values.getCollectionOrDefault(defKids, listOf())
+            val coordinate = values.getCollectionOrNull(defCoord) ?.let { Pair(it[0], it[1]) }
 
             return PersonObject(name, surname, age, middleName, hairColor, kids, coordinate)
         }

@@ -23,7 +23,7 @@ data class StrictSetterCommand(
         private val colorDefinition = FlagDefinition("color", Color::class)
         private val readOnlyDefinition = BooleanSwitchDefinition("read-only")
         private val tagDefinition = FlagDefinition("tag", Tag::class, withDelimiter = ",")
-        private val personDefinition = ParameterDefinition("person", String::class, arity = 2, required = false)
+        private val personDefinition = ParameterDefinition("person", String::class, arity = 2)
 
         val commandDefinition = CommandDefinition(
             "set", 0, 0, listOf(
@@ -40,16 +40,15 @@ data class StrictSetterCommand(
         )
 
         fun parse(values: ValueParseObject): StrictSetterCommand {
-            val dictionary = values.options
-            val id = dictionary[idDefinition.name] as Int
-            val name = dictionary[nameDefinition.name] as String
-            val surname = dictionary[surnameDefinition.name] as String?
-            val age = dictionary[ageDefinition.name] as Int
-            val height = dictionary[heightDefinition.name] as Double?
-            val color = dictionary[colorDefinition.name] as Color?
-            val readonly = dictionary[readOnlyDefinition.name] as Boolean?
-            val tags = Converter.castList(dictionary[tagDefinition.name], Tag::class)
-            val personList = Converter.castList(dictionary[personDefinition.name], String::class)
+            val id = values.get(idDefinition)
+            val name = values.get(nameDefinition)
+            val surname = values.getNullable(surnameDefinition)
+            val age = values.get(ageDefinition)
+            val height = values.getNullable(heightDefinition)
+            val color = values.getNullable(colorDefinition)
+            val readonly = values.getNullable(readOnlyDefinition)
+            val tags = values.getCollectionOrNull(tagDefinition)
+            val personList = values.getCollectionOrNull(personDefinition)
 
             return StrictSetterCommand(
                 id,
