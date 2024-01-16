@@ -47,8 +47,8 @@ data class StrictSetterCommand(
             val height = values.getNullable(heightDefinition)
             val color = values.getNullable(colorDefinition)
             val readonly = values.getNullable(readOnlyDefinition)
-            val tags = values.getCollectionOrNull(tagDefinition)
-            val personList = values.getCollectionOrNull(personDefinition)
+            val tags = values.getListOrNull(tagDefinition)
+            val personList = values.getListOrNull(personDefinition)
 
             return StrictSetterCommand(
                 id,

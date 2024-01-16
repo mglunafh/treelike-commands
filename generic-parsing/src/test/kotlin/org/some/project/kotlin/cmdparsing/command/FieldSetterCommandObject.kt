@@ -34,8 +34,8 @@ data class FieldSetterCommandObject(
             val name = values.getOrNull<String>("name")
             val color = values.get<Color>("color")
             val readonly = values.getOrNull<Boolean>("read-only")
-            val tags = values.getCollectionOrNull<Tag>("tag")
-            val person = values.getCollectionOrNull<String>("person")?.let { Pair(it[0], it[1]) }
+            val tags = values.getListOrNull<Tag>("tag")
+            val person = values.getListOrNull<String>("person")?.let { Pair(it[0], it[1]) }
 
             return FieldSetterCommandObject(id, name, color, tags, readonly, person)
         }

@@ -32,8 +32,8 @@ data class PersonObject(
 
             val age = values.get(defAge)
             val hairColor = values.getNullable(defHairColor)
-            val kids = values.getCollectionOrDefault(defKids, listOf())
-            val coordinate = values.getCollectionOrNull(defCoord) ?.let { Pair(it[0], it[1]) }
+            val kids = values.getListOrDefault(defKids, listOf())
+            val coordinate = values.getListOrNull(defCoord) ?.let { Pair(it[0], it[1]) }
 
             return PersonObject(name, surname, age, middleName, hairColor, kids, coordinate)
         }
