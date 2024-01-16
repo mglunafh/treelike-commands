@@ -1,7 +1,6 @@
 package org.some.project.kotlin.cmdparsing
 
 import kotlin.reflect.KClass
-import kotlin.reflect.safeCast
 
 object Converter {
 
@@ -24,17 +23,6 @@ object Converter {
         if (standardConversionList.any { it.type == type }) return
 
         standardConversionList.add(ConversionRecord(type, converter))
-    }
-
-    fun <T: Any> castList(listValue: Any?, type: KClass<T>): List<T>? {
-        if (listValue == null) return null
-        if (listValue !is List<*>) {
-            throw IllegalArgumentException("Parameter was not a list!")
-        }
-        return MutableList(listValue.size) {
-            type.safeCast(listValue[it]) ?:
-                throw IllegalArgumentException("List contains a value '${listValue[it]}' of type incompatible with $type")
-        }
     }
 
     private data class ConversionRecord<T: Any>(val type: KClass<T>, val converter: ConvertibleTo<T>)

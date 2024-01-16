@@ -26,7 +26,6 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - remove obsolete methods from the CommandLineArgumentParser
   - add some javadoc ValueParseObject if it would help retrieving values, add tests for incorrect usage
   - think about positional arguments which currently do not support type conversions
   - think more about validation
