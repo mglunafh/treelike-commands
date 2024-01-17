@@ -4,8 +4,8 @@ import kotlin.reflect.KClass
 
 data class CommandDefinition(
     val commandName: String,
-    val positionalArguments: Int,
-    val requiredPositionalArguments: Int,
+    val positionalArguments: Int = 0,
+    val requiredPositionalArguments: Int = 0,
     val paramDefinitions: List<ParameterDefinition<out Any>> = listOf()
 )
 

@@ -16,10 +16,10 @@ class StrictFiledSetterParsingTest {
         val line = pair.first
         val expected = pair.second
 
-        val parseResult = CommandLineArgumentParser.parse(line, DEFINITION)
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
         require(parseResult is ParseResult.ParseSuccess)
         val validationResult =
-            CommandLineArgumentParser.validateAndConvertParseResults(DEFINITION, parseResult.result)
+            CommandLineArgumentParser.convertParseResults(DEFINITION, parseResult.result)
         require(validationResult is ParseResult.ParseSuccess)
 
         val result = StrictSetterCommand.parse(validationResult.result)
@@ -32,7 +32,7 @@ class StrictFiledSetterParsingTest {
         val line = pair.first
         val expectedError = pair.second
 
-        val parseResult = CommandLineArgumentParser.parse(line, DEFINITION)
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
         require(parseResult is ParseResult.ParseError)
         assertEquals(expectedError, parseResult.error)
     }
@@ -43,9 +43,9 @@ class StrictFiledSetterParsingTest {
         val line = pair.first
         val expectedError = pair.second
 
-        val parseResult = CommandLineArgumentParser.parse(line, DEFINITION)
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
         require(parseResult is ParseResult.ParseSuccess)
-        val validationResult = CommandLineArgumentParser.validateAndConvertParseResults(DEFINITION, parseResult.result)
+        val validationResult = CommandLineArgumentParser.convertParseResults(DEFINITION, parseResult.result)
         require(validationResult is ParseResult.ParseError)
         assertEquals(expectedError, validationResult.error)
     }

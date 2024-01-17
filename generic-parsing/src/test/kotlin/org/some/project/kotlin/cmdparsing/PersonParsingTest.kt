@@ -15,10 +15,10 @@ class PersonParsingTest {
         val line = pair.first
         val expected = pair.second
 
-        val parseResult = CommandLineArgumentParser.parse(line, DEFINITION)
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
         require(parseResult is ParseResult.ParseSuccess)
         val validatedResult =
-            CommandLineArgumentParser.validateAndConvertParseResults(DEFINITION, parseResult.result)
+            CommandLineArgumentParser.convertParseResults(DEFINITION, parseResult.result)
         require(validatedResult is ParseResult.ParseSuccess)
 
         val result = PersonObject.parse(validatedResult.result)
@@ -30,7 +30,7 @@ class PersonParsingTest {
     fun `Test parse errors`(pair: Pair<String, ErrorType>) {
         val line = pair.first
         val expected = pair.second
-        val parseResult = CommandLineArgumentParser.parse(line, DEFINITION)
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
         require(parseResult is ParseResult.ParseError)
         assertEquals(expected, parseResult.error)
     }
@@ -40,10 +40,10 @@ class PersonParsingTest {
     fun `Test conversion and validation errors`(pair: Pair<String, ErrorType>) {
         val line = pair.first
         val expected = pair.second
-        val parseResult = CommandLineArgumentParser.parse(line, DEFINITION)
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
         require(parseResult is ParseResult.ParseSuccess)
         val validatedResult =
-            CommandLineArgumentParser.validateAndConvertParseResults(DEFINITION, parseResult.result)
+            CommandLineArgumentParser.convertParseResults(DEFINITION, parseResult.result)
         require(validatedResult is ParseResult.ParseError)
         assertEquals(expected, validatedResult.error)
     }

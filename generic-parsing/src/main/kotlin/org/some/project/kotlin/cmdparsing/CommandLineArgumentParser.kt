@@ -11,7 +11,7 @@ import kotlin.reflect.cast
 
 object CommandLineArgumentParser {
 
-    fun validateAndConvertParseResults(
+    fun convertParseResults(
         commandDefinition: CommandDefinition,
         parseObject: TokenizedParseObject
     ): ParseResult<ValueParseObject> {
@@ -131,10 +131,9 @@ object CommandLineArgumentParser {
         return mapValues(value.list, converter)
     }
 
-    fun parse(argLine: String, commandDefinition: CommandDefinition): ParseResult<TokenizedParseObject> {
+    fun parse(commandDefinition: CommandDefinition, args: List<String>): ParseResult<TokenizedParseObject> {
         val commandName = commandDefinition.commandName
         val flags = createFlags(commandDefinition.paramDefinitions)
-        val args = Tokenizer.tokenize(argLine)
 
         var currState = StateMachine.INIT
         var currOption: ParameterDefinition<out Any>? = null
