@@ -31,6 +31,8 @@ data class MissingParameters(val command: String, val paramName: String) : Gener
 
 sealed class GenericValidationError : ErrorType()
 
+data class NoOptions(val command: String): GenericValidationError()
+
 data class RequiredParameterNotSet(val command: String, val paramName: String) : GenericValidationError()
 
 abstract class CustomValidationError: GenericValidationError() {
