@@ -26,7 +26,6 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - finish 'PointSetCommand'  
   - think about positional arguments which currently do not support type conversions
   - interface 'CommandObjectParser' should include  polymorphic validation calls
   - add javadoc for the rest of the `generic-parsing` submodule:

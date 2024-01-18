@@ -80,7 +80,7 @@ data class ValueParseObject(val positionalArguments: List<String>, val options: 
      * or a type of the found value was not a list.
      */
     inline fun <reified T: Any> getListOrDefault(paramDefinition: ParameterDefinition<T>, default: List<T>): List<T> {
-        if (paramDefinition.arity <= 1 && paramDefinition.withDelimiter == null) {
+        if (paramDefinition.arity <= 1 && paramDefinition.delimiter == null) {
             throw IllegalArgumentException("Parameter $paramDefinition is not represented as a collection")
         }
         val listValue = options[paramDefinition.name] ?: return default
@@ -96,7 +96,7 @@ data class ValueParseObject(val positionalArguments: List<String>, val options: 
      * or a type of the found value was not a list.
      */
     inline fun <reified T: Any> getListOrNull(paramDefinition: ParameterDefinition<T>): List<T>? {
-        if (paramDefinition.arity <= 1 && paramDefinition.withDelimiter == null) {
+        if (paramDefinition.arity <= 1 && paramDefinition.delimiter == null) {
             throw IllegalArgumentException("Parameter $paramDefinition is not represented as a collection")
         }
         val listValue = options[paramDefinition.name] ?: return null

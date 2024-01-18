@@ -14,7 +14,7 @@ data class FieldSetterCommandObject(
         private val idDefinition = IntFlagDefinition("id")
         private val nameDefinition = StringFlagDefinition("name")
         private val colorDefinition = FlagDefinition("color", Color::class, default = Color.WHITE)
-        private val tagDefinition = FlagDefinition("tag", Tag::class, withDelimiter = ",")
+        private val tagDefinition = FlagDefinition("tag", Tag::class, delimiter = ",")
         private val readOnlyDefinition = BooleanSwitchDefinition("read-only")
         private val personDefinition = ParameterDefinition("person", String::class, arity = 2, required = false)
 

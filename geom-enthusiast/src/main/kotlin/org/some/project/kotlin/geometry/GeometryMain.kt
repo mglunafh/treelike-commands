@@ -3,10 +3,7 @@ package org.some.project.kotlin.geometry
 import org.some.project.kotlin.cmdparsing.*
 import org.some.project.kotlin.geometry.command.Color
 import org.some.project.kotlin.geometry.command.Tag
-import org.some.project.kotlin.geometry.command.point.PointIdCommand
-import org.some.project.kotlin.geometry.command.point.PointNameCommand
-import org.some.project.kotlin.geometry.command.point.PointShowCommand
-import org.some.project.kotlin.geometry.command.point.PointTagCommand
+import org.some.project.kotlin.geometry.command.point.*
 
 fun main(args: Array<String>) {
     print("Hello, Geometry enthusiast! ")
@@ -46,6 +43,7 @@ fun determineCommand(commandName: String): CommandObjectParser<*>? {
         "id" -> PointIdCommand
         "name" -> PointNameCommand
         "tag" -> PointTagCommand
+        "set" -> PointSetCommand
         "show" -> PointShowCommand
         else -> null
     }

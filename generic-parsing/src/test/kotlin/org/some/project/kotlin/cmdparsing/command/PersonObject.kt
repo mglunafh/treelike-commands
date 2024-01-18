@@ -17,7 +17,7 @@ data class PersonObject(
         val defSurname = StringFlagDefinition("surname", required = true)
         val defAge = IntFlagDefinition("age", required = true)
         val defHairColor = ParameterDefinition("hair-color", Color::class)
-        val defKids = StringFlagDefinition("kids", withDelimiter = ",")
+        val defKids = StringFlagDefinition("kids", delimiter = ",")
         val defCoord = ParameterDefinition("coord", Double::class, arity = 2)
 
     val commandDefinition = CommandDefinition("person", 3, 2, listOf(defAge, defHairColor, defKids, defCoord))

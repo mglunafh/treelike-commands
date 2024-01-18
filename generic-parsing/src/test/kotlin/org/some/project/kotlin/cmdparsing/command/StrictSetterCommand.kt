@@ -22,7 +22,7 @@ data class StrictSetterCommand(
         private val heightDefinition = ParameterDefinition("height", Double::class)
         private val colorDefinition = FlagDefinition("color", Color::class)
         private val readOnlyDefinition = BooleanSwitchDefinition("read-only")
-        private val tagDefinition = FlagDefinition("tag", Tag::class, withDelimiter = ",")
+        private val tagDefinition = FlagDefinition("tag", Tag::class, delimiter = ",")
         private val personDefinition = ParameterDefinition("person", String::class, arity = 2)
 
         val commandDefinition = CommandDefinition(

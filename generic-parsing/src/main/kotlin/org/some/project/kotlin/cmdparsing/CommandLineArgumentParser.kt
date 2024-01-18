@@ -24,7 +24,7 @@ object CommandLineArgumentParser {
             val optionName = paramDefinition.name
             val optionType = paramDefinition.type
             val arity = paramDefinition.arity
-            val delimiter = paramDefinition.withDelimiter
+            val delimiter = paramDefinition.delimiter
 
             val value = options[optionName]
 

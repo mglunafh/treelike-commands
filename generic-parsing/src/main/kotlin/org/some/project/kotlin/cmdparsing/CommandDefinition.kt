@@ -15,7 +15,7 @@ open class ParameterDefinition<T : Any>(
     open val arity: Int = 1,
     open val required: Boolean = false,
     open val default: T? = null,
-    open val withDelimiter: String? = null
+    open val delimiter: String? = null
 )
 
 data class BooleanSwitchDefinition(
@@ -28,26 +28,26 @@ data class FlagDefinition<T : Any>(
     override val type: KClass<T>,
     override val required: Boolean = false,
     override val default: T? = null,
-    override val withDelimiter: String? = null
-) : ParameterDefinition<T>(name, type, required = required,default = default, withDelimiter = withDelimiter)
+    override val delimiter: String? = null
+) : ParameterDefinition<T>(name, type, required = required,default = default, delimiter = delimiter)
 
 data class IntFlagDefinition(
     override val name: String,
     override val required: Boolean = false,
     override val default: Int? = null,
-    override val withDelimiter: String? = null
-) : ParameterDefinition<Int>(name, Int::class, required = required, default = default, withDelimiter = withDelimiter)
+    override val delimiter: String? = null
+) : ParameterDefinition<Int>(name, Int::class, required = required, default = default, delimiter = delimiter)
 
 data class DoubleFlagDefinition(
     override val name: String,
     override val required: Boolean = false,
     override val default: Double? = null,
-    override val withDelimiter: String? = null
-) : ParameterDefinition<Double>(name, Double::class, required = required, default = default, withDelimiter = withDelimiter)
+    override val delimiter: String? = null
+) : ParameterDefinition<Double>(name, Double::class, required = required, default = default, delimiter = delimiter)
 
 data class StringFlagDefinition(
     override val name: String,
     override val required: Boolean = false,
     override val default: String? = null,
-    override val withDelimiter: String? = null
-) : ParameterDefinition<String>(name, String::class, required = required, default = default, withDelimiter = withDelimiter)
+    override val delimiter: String? = null
+) : ParameterDefinition<String>(name, String::class, required = required, default = default, delimiter = delimiter)

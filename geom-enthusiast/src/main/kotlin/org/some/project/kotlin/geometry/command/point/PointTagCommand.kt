@@ -7,8 +7,8 @@ data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val ta
 
     companion object : CommandObjectParser<PointTagCommand> {
         val defShow = BooleanSwitchDefinition("show")
-        val defAddTags = ParameterDefinition("add", Tag::class, withDelimiter = ",")
-        val defRemoveTags = ParameterDefinition("rm", Tag::class, withDelimiter = ",")
+        val defAddTags = ParameterDefinition("add", Tag::class, delimiter = ",")
+        val defRemoveTags = ParameterDefinition("rm", Tag::class, delimiter = ",")
 
         override val commandDefinition =
             CommandDefinition("tag", paramDefinitions = listOf(defShow, defAddTags, defRemoveTags))
@@ -26,7 +26,6 @@ data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val ta
             }
         }
     }
-
 
     data class ExclusiveOptions(val options: List<String>): CustomValidationError() {
         override fun getMessage(): String {
