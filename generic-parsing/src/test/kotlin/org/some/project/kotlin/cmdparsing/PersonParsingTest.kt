@@ -16,10 +16,14 @@ class PersonParsingTest {
         val expected = pair.second
 
         val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
-        require(parseResult is ParseResult.ParseSuccess)
+        require(parseResult is ParseResult.ParseSuccess) {
+            "Instead of success, got ${(parseResult as ParseResult.ParseError).error}."
+        }
         val validatedResult =
             CommandLineArgumentParser.convertParseResults(DEFINITION, parseResult.result)
-        require(validatedResult is ParseResult.ParseSuccess)
+        require(validatedResult is ParseResult.ParseSuccess) {
+            "Instead of successful conversion, got ${(validatedResult as ParseResult.ParseError).error}."
+        }
 
         val result = PersonObject.parse(validatedResult.result)
         assertEquals(expected, result)
@@ -118,14 +122,14 @@ class PersonParsingTest {
                 "set --person Anton Antonov" to WrongCommand(COMMAND_NAME, "set"),
                 "person" to TooFewRequiredArguments(COMMAND_NAME, 2, 0),
                 "person Anton" to tooFewArgs,
-                "person Jean Claude Van Damme" to TooManyArguments(COMMAND_NAME, 3),
-                "person Anton Antonov --age" to MissingParameterValue(COMMAND_NAME, "age"),
+                "person Jean Claude Van Damme" to TooManyArguments(COMMAND_NAME, 3, "Damme"),
+                "person Anton Antonov --age" to MissingParameterValue(COMMAND_NAME, "--age"),
                 "person Anton --age 35 --kids Sonny,Lenny,Jeany --hair-color blue" to tooFewArgs,
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton" to tooFewArgs,
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton --coord " to
-                        MissingParameters(COMMAND_NAME, "coord"),
+                        MissingParameters(COMMAND_NAME, "--coord"),
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton --coord 1" to
-                        MissingParameters(COMMAND_NAME, "coord"),
+                        MissingParameters(COMMAND_NAME, "--coord"),
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton --coord 1 2" to tooFewArgs
             )
         }
@@ -133,11 +137,11 @@ class PersonParsingTest {
         @JvmStatic
         fun conversionErrors(): List<Pair<String, ErrorType>> {
             return listOf(
-                "person Anton Antonov --age value" to ValueConversionFailed(COMMAND_NAME, "age", "value", Int::class),
+                "person Anton Antonov --age value" to ValueConversionFailed(COMMAND_NAME, "--age", "value", Int::class),
                 "person Anton --age 35 --hair-color blue --coord one two Antonov" to
-                        ValueConversionFailed(COMMAND_NAME, "coord", "one, two", Double::class),
+                        ValueConversionFailed(COMMAND_NAME, "--coord", "one, two", Double::class),
                 "person 1 2 --age 35 --kids Sonny,Lenny,Jeany --hair-color blue --coord Anton Antonov" to
-                        ValueConversionFailed(COMMAND_NAME, "coord", "Anton, Antonov", Double::class)
+                        ValueConversionFailed(COMMAND_NAME, "--coord", "Anton, Antonov", Double::class)
             )
         }
     }

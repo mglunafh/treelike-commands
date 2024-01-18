@@ -86,34 +86,34 @@ class FieldSetterParsingTest {
         @JvmStatic
         fun parsingErrors(): List<Pair<String, ErrorType>> {
             return listOf(
-                "set --id " to MissingParameterValue(COMMAND_NAME, "id"),
+                "set --id " to MissingParameterValue(COMMAND_NAME, "--id"),
                 "ste --id 1" to WrongCommand(COMMAND_NAME, "ste"),
-                "set --id  14 --name" to MissingParameterValue(COMMAND_NAME, "name"),
-                "set -- id 14 --name Goobis" to UnrecognizedFlag(COMMAND_NAME, "--"),
+                "set --id  14 --name" to MissingParameterValue(COMMAND_NAME, "--name"),
+                "set -- id 14 --name Goobis" to TooManyArguments(COMMAND_NAME, 0, "--"),
                 "set --id 14 --name Goobis --surname Kazakh --id 15 --read-only" to
-                        UnrecognizedFlag(COMMAND_NAME, "--surname"),
+                        TooManyArguments(COMMAND_NAME, 0, "--surname"),
                 "set --id 14 --name Goobis --color green --tag" to
-                        MissingParameterValue(COMMAND_NAME, "tag"),
+                        MissingParameterValue(COMMAND_NAME, "--tag"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --no-read-only" to
-                        UnrecognizedFlag(COMMAND_NAME, "--no-read-only"),
+                        TooManyArguments(COMMAND_NAME, 0, "--no-read-only"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --person Anton" to
-                        MissingParameters(COMMAND_NAME, "person")
+                        MissingParameters(COMMAND_NAME, "--person")
             )
         }
 
         @JvmStatic
         fun conversionErrors(): List<Pair<String, ErrorType>> {
             return listOf(
-                "set --id name" to ValueConversionFailed(COMMAND_NAME, "id", "name", Int::class),
-                "set --id 14 --name Goobis --color slam" to ValueConversionFailed(COMMAND_NAME, "color", "slam", Color::class),
+                "set --id name" to ValueConversionFailed(COMMAND_NAME, "--id", "name", Int::class),
+                "set --id 14 --name Goobis --color slam" to ValueConversionFailed(COMMAND_NAME, "--color", "slam", Color::class),
                 "set --id 14 --name Goobis --color green --tag pook,guke,__luke" to
-                        ValueConversionFailed(COMMAND_NAME, "tag", "__luke", Tag::class),
+                        ValueConversionFailed(COMMAND_NAME, "--tag", "__luke", Tag::class),
                 "set --id 14 --name Goobis --color green --tag pook,_guke,_luke" to
-                        ValueConversionFailed(COMMAND_NAME, "tag", "_guke, _luke", Tag::class),
+                        ValueConversionFailed(COMMAND_NAME, "--tag", "_guke, _luke", Tag::class),
                 "set --id 14 --name Goobis --color blue --tag pook,guke;luke" to
-                        ValueConversionFailed(COMMAND_NAME, "tag", "guke;luke", Tag::class),
+                        ValueConversionFailed(COMMAND_NAME, "--tag", "guke;luke", Tag::class),
                 "set --id 14 --name Goobis --color green --tag pook;guke" to
-                        ValueConversionFailed(COMMAND_NAME, "tag", "pook;guke", Tag::class),
+                        ValueConversionFailed(COMMAND_NAME, "--tag", "pook;guke", Tag::class),
             )
         }
     }

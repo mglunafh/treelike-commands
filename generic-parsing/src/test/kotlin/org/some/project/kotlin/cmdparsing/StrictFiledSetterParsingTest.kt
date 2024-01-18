@@ -17,10 +17,14 @@ class StrictFiledSetterParsingTest {
         val expected = pair.second
 
         val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
-        require(parseResult is ParseResult.ParseSuccess)
+        require(parseResult is ParseResult.ParseSuccess) {
+            "Instead of success, got ${(parseResult as ParseResult.ParseError).error}."
+        }
         val validationResult =
             CommandLineArgumentParser.convertParseResults(DEFINITION, parseResult.result)
-        require(validationResult is ParseResult.ParseSuccess)
+        require(validationResult is ParseResult.ParseSuccess) {
+            "Instead of successful conversion, got ${(validationResult as ParseResult.ParseError).error}."
+        }
 
         val result = StrictSetterCommand.parse(validationResult.result)
         assertEquals(expected, result)
@@ -87,36 +91,36 @@ class StrictFiledSetterParsingTest {
         @JvmStatic
         fun parsingErrors(): List<Pair<String, ErrorType>> {
             return listOf(
-                "set --id " to MissingParameterValue(COMMAND_NAME, "id"),
+                "set --id " to MissingParameterValue(COMMAND_NAME, "--id"),
                 "ste --id 1" to WrongCommand(COMMAND_NAME, "ste"),
-                "set --id  14 --name" to MissingParameterValue(COMMAND_NAME, "name"),
-                "set -- id 14 --name Goobis" to UnrecognizedFlag(COMMAND_NAME, "--"),
-                "set --id 14 --name Goobis --height " to MissingParameterValue(COMMAND_NAME, "height"),
+                "set --id  14 --name" to MissingParameterValue(COMMAND_NAME, "--name"),
+                "set -- id 14 --name Goobis" to TooManyArguments(COMMAND_NAME, 0, "--"),
+                "set --id 14 --name Goobis --height " to MissingParameterValue(COMMAND_NAME, "--height"),
                 "set --id 14 --name Goobis --color green --tag" to
-                        MissingParameterValue(COMMAND_NAME, "tag"),
+                        MissingParameterValue(COMMAND_NAME, "--tag"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --no-read-only" to
-                        UnrecognizedFlag(COMMAND_NAME, "--no-read-only"),
+                        TooManyArguments(COMMAND_NAME, 0, "--no-read-only"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --person Anton" to
-                        MissingParameters(COMMAND_NAME, "person")
+                        MissingParameters(COMMAND_NAME, "--person")
             )
         }
 
         @JvmStatic
         fun conversionErrors(): List<Pair<String, ErrorType>> {
             return listOf(
-                "set --id 1" to RequiredParameterNotSet(COMMAND_NAME, "name"),
+                "set --id 1" to RequiredParameterNotSet(COMMAND_NAME, "--name"),
                 "set --id name" to CompositeError(listOf(
-                    ValueConversionFailed(COMMAND_NAME, "id", "name", Int::class),
-                    RequiredParameterNotSet(COMMAND_NAME, "name"))),
+                    ValueConversionFailed(COMMAND_NAME, "--id", "name", Int::class),
+                    RequiredParameterNotSet(COMMAND_NAME, "--name"))),
                 "set --read-only" to CompositeError(listOf(
-                    RequiredParameterNotSet(COMMAND_NAME, "id"),
-                    RequiredParameterNotSet(COMMAND_NAME, "name"))),
+                    RequiredParameterNotSet(COMMAND_NAME, "--id"),
+                    RequiredParameterNotSet(COMMAND_NAME, "--name"))),
                 "set --id 14 --name Goobis --color slam" to
-                        ValueConversionFailed(COMMAND_NAME, "color", "slam", Color::class),
+                        ValueConversionFailed(COMMAND_NAME, "--color", "slam", Color::class),
                 "set --id 14 --name Goobis --surname Kazakh --color green --tag pook,guke,__luke" to
-                        ValueConversionFailed(COMMAND_NAME, "tag", "__luke", Tag::class),
+                        ValueConversionFailed(COMMAND_NAME, "--tag", "__luke", Tag::class),
                 "set --id 14 --name Goobis --surname Kazakh --color green --tag pook,guke;luke" to
-                        ValueConversionFailed(COMMAND_NAME, "tag", "guke;luke", Tag::class))
+                        ValueConversionFailed(COMMAND_NAME, "--tag", "guke;luke", Tag::class))
         }
     }
 }

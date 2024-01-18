@@ -8,7 +8,6 @@ import org.some.project.kotlin.cmdparsing.ParseResult.ParseSuccess
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
-
 object CommandLineArgumentParser {
 
     fun convertParseResults(
@@ -160,10 +159,8 @@ object CommandLineArgumentParser {
                         flag == null -> {
                             if (posArgsList.size < commandDefinition.positionalArguments) {
                                 posArgsList.add(arg)
-                            } else if (arg.startsWith("--")) {
-                                return ParseError(UnrecognizedFlag(commandName, arg))
                             } else {
-                                return ParseError(TooManyArguments(commandName, commandDefinition.positionalArguments))
+                                return ParseError(TooManyArguments(commandName, commandDefinition.positionalArguments, arg))
                             }
                         }
                         flag.type == Boolean::class -> {
@@ -252,7 +249,7 @@ object CommandLineArgumentParser {
     }
 
     private fun createFlags(flagDefinitions: List<ParameterDefinition<out Any>>): Map<String, ParameterDefinition<out Any>> {
-        return flagDefinitions.associateBy { "--${it.name}" }
+        return flagDefinitions.associateBy { it.name }
     }
 
     private enum class StateMachine {

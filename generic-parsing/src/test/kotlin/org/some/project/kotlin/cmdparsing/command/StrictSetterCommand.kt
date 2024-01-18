@@ -15,15 +15,15 @@ data class StrictSetterCommand(
 ) {
 
     companion object {
-        private val idDefinition = IntFlagDefinition("id", required = true)
-        private val nameDefinition = StringFlagDefinition("name", required = true)
-        private val surnameDefinition = StringFlagDefinition("surname")
-        private val ageDefinition = IntFlagDefinition("age", default = 18)
-        private val heightDefinition = ParameterDefinition("height", Double::class)
-        private val colorDefinition = FlagDefinition("color", Color::class)
-        private val readOnlyDefinition = BooleanSwitchDefinition("read-only")
-        private val tagDefinition = FlagDefinition("tag", Tag::class, delimiter = ",")
-        private val personDefinition = ParameterDefinition("person", String::class, arity = 2)
+        private val idDefinition = IntFlagDefinition("--id", required = true)
+        private val nameDefinition = StringFlagDefinition("--name", required = true)
+        private val surnameDefinition = StringFlagDefinition("--surname")
+        private val ageDefinition = IntFlagDefinition("--age", default = 18)
+        private val heightDefinition = ParameterDefinition("--height", Double::class)
+        private val colorDefinition = FlagDefinition("--color", Color::class)
+        private val readOnlyDefinition = BooleanSwitchDefinition("--read-only")
+        private val tagDefinition = FlagDefinition("--tag", Tag::class, delimiter = ",")
+        private val personDefinition = ParameterDefinition("--person", String::class, arity = 2)
 
         val commandDefinition = CommandDefinition(
             "set", 0, 0, listOf(

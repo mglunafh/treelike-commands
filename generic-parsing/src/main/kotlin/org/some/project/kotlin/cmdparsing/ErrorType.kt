@@ -18,7 +18,7 @@ data object EmptyArguments : GenericParseError()
 
 data class WrongCommand(val expected: String, val actual: String) : GenericParseError()
 
-data class TooManyArguments(val command: String, val argCount: Int) : GenericParseError()
+data class TooManyArguments(val command: String, val argCount: Int, val excess: String) : GenericParseError()
 
 data class TooFewRequiredArguments(val command: String, val requiredArgCount: Int, val actualArgCount: Int) :
     GenericParseError()
