@@ -4,7 +4,6 @@ package org.some.project.kotlin.geometry.command
 value class Tag private constructor(val tag: String) {
 
     companion object {
-
         val TAG_REGEX = """^[a-z][a-z0-9\-]*${'$'}""".toRegex()
         private const val message = "Value does not satisfy the requirements of a valid tag."
 

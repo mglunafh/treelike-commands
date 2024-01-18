@@ -2,6 +2,7 @@ package org.some.project.kotlin.geometry
 
 import org.some.project.kotlin.cmdparsing.*
 import org.some.project.kotlin.geometry.command.Color
+import org.some.project.kotlin.geometry.command.Name
 import org.some.project.kotlin.geometry.command.Tag
 import org.some.project.kotlin.geometry.command.point.*
 
@@ -9,6 +10,7 @@ fun main(args: Array<String>) {
     print("Hello, Geometry enthusiast! ")
     Converter.registerConverter(Tag::class) { Tag.toTagOrNull(it) }
     Converter.registerConverter(Color::class) { Color.toColorOrNull(it) }
+    Converter.registerConverter(Name::class) { Name.toNameOrNull(it) }
 
     while (true) {
         print(":> ")
@@ -57,7 +59,7 @@ fun displayParseError(error: ErrorType): String {
         is TooFewRequiredArguments ->
             "Command '${error.command}': Too few arguments (${error.actualArgCount}) have been passed" +
                     " to the command, it requires at least ${error.requiredArgCount}."
-        is TooManyArguments -> "Too many arguments, expected ${error.argCount} at most"
+        is TooManyArguments -> "Too many arguments, expected ${error.argCount} at most, excess: '${error.excess}'."
         is MissingParameterValue -> "Command '${error.command}': Missing a parameter for flag '${error.paramName}'"
         is MissingParameters -> "Command '${error.command}': Missing one or more arguments for flag '${error.paramName}'"
         ToBeImplemented -> "Is not implemented yet"

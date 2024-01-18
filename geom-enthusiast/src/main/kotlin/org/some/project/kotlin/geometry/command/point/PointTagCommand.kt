@@ -6,9 +6,9 @@ import org.some.project.kotlin.geometry.command.Tag
 data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val tagsToRemove: List<Tag>?) {
 
     companion object : CommandObjectParser<PointTagCommand> {
-        val defShow = BooleanSwitchDefinition("show")
-        val defAddTags = ParameterDefinition("add", Tag::class, delimiter = ",")
-        val defRemoveTags = ParameterDefinition("rm", Tag::class, delimiter = ",")
+        val defShow = BooleanSwitchDefinition("--show")
+        val defAddTags = ParameterDefinition("--add", Tag::class, delimiter = ",")
+        val defRemoveTags = ParameterDefinition("--rm", Tag::class, delimiter = ",")
 
         override val commandDefinition =
             CommandDefinition("tag", paramDefinitions = listOf(defShow, defAddTags, defRemoveTags))
