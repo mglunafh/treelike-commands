@@ -6,7 +6,7 @@ import org.some.project.kotlin.geometry.command.Id
 data class OverviewInspectCommand(val id: Id) {
 
     companion object : CommandObjectParser<OverviewInspectCommand> {
-        override val commandDefinition = CommandDefinition("inspect", 1, 1)
+        override val commandDefinition = CommandDefinition("inspect", 1)
 
         override fun parse(arguments: ValueParseObject): ParseResult<OverviewInspectCommand> {
             val idString = arguments.positionalArguments[0]

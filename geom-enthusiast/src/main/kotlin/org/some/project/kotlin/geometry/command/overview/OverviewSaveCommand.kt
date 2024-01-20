@@ -8,7 +8,7 @@ import org.some.project.kotlin.cmdparsing.ValueParseObject
 data class OverviewSaveCommand(val filename: String) {
 
     companion object : CommandObjectParser<OverviewSaveCommand> {
-        override val commandDefinition = CommandDefinition("save", 1, 1)
+        override val commandDefinition = CommandDefinition("save", 1)
 
         override fun parse(arguments: ValueParseObject): ParseResult<OverviewSaveCommand> {
             return ParseResult.ParseSuccess(OverviewSaveCommand(arguments.positionalArguments[0]))

@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
             println("Have a nice day!")
             break
         }
-        val commandParser = determineOverviewCommand(cmdArgs[0])
+        val commandParser = determinePointCommand(cmdArgs[0])
         if (commandParser == null) {
             println("Could not understand the command")
             continue

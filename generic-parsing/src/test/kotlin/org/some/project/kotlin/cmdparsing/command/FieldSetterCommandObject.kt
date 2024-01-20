@@ -19,7 +19,7 @@ data class FieldSetterCommandObject(
         private val personDefinition = ParameterDefinition("--person", String::class, arity = 2, required = false)
 
         val fieldSetterCommandDefinition = CommandDefinition(
-            "set", 0, 0, listOf(
+            "set", listOf(
                 idDefinition,
                 nameDefinition,
                 colorDefinition,

@@ -4,10 +4,19 @@ import kotlin.reflect.KClass
 
 data class CommandDefinition(
     val commandName: String,
-    val positionalArguments: Int = 0,
-    val requiredPositionalArguments: Int = 0,
+    val requiredPositionalArguments: Int,
+    val positionalArguments: Int,
     val paramDefinitions: List<ParameterDefinition<out Any>> = listOf()
-)
+) {
+
+    constructor(commandName: String) : this(commandName, 0, 0, listOf())
+
+    constructor(commandName: String, requiredPositionalArguments: Int) :
+            this(commandName, requiredPositionalArguments, requiredPositionalArguments, listOf())
+
+    constructor(commandName: String, paramDefinitions: List<ParameterDefinition<out Any>>) :
+            this(commandName, 0, 0, paramDefinitions)
+}
 
 open class ParameterDefinition<T : Any>(
     open val name: String,

@@ -22,8 +22,8 @@ data class PersonObject(
 
     val commandDefinition = CommandDefinition(
         "person",
-        positionalArguments = 3,
         requiredPositionalArguments = 2,
+        positionalArguments = 3,
         paramDefinitions = listOf(defAge, defHairColor, defKids, defCoord)
     )
 

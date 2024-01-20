@@ -28,9 +28,9 @@ data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val ta
     }
 
     data class ExclusiveOptions(val options: List<String>): CustomValidationError() {
+
         override fun getMessage(): String {
             return "Options $options are mutually exclusive and cannot be used simultaneously"
         }
-
     }
 }

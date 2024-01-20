@@ -6,8 +6,7 @@ import org.some.project.kotlin.geometry.command.FigureType
 data class OverviewCreateCommand(val fig: FigureType) {
 
     companion object: CommandObjectParser<OverviewCreateCommand> {
-        override val commandDefinition = CommandDefinition("create", 1, 1)
-
+        override val commandDefinition = CommandDefinition("create", 1)
 
         override fun parse(arguments: ValueParseObject): ParseResult<OverviewCreateCommand> {
             val figure = arguments.positionalArguments[0]

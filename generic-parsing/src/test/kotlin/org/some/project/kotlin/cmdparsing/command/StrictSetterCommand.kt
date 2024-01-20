@@ -26,7 +26,8 @@ data class StrictSetterCommand(
         private val personDefinition = ParameterDefinition("--person", String::class, arity = 2)
 
         val commandDefinition = CommandDefinition(
-            "set", 0, 0, listOf(
+            "set",
+            listOf(
                 idDefinition,
                 nameDefinition,
                 ageDefinition,
