@@ -34,9 +34,7 @@ fun main(args: Array<String>) {
         }
         val cmdDef = commandParser.commandDefinition
 
-        val commandObject = CommandLineArgumentParser.parse(cmdDef, cmdArgs)
-            .flatMap { CommandLineArgumentParser.convertParseResults(cmdDef, it) }
-            .flatMap { commandParser.parse(it) }
+        val commandObject = CmdParsingFacade.parse(commandParser, cmdArgs)
 
         when (commandObject) {
             is ParseResult.ParseError -> println(displayParseError(commandObject.error))
