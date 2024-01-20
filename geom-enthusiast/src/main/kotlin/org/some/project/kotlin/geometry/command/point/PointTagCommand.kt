@@ -13,7 +13,7 @@ data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val ta
         override val commandDefinition = CommandDefinition(
             "tag",
             listOf(defShow, defAddTags, defRemoveTags),
-            description = "Perform one of show/add/remove operations on tags")
+            description = "Perform one of show/add/remove operations on point tags")
 
         override fun parse(arguments: ValueParseObject): ParseResult<PointTagCommand> {
             val presentOptions = mutableListOf<String>()

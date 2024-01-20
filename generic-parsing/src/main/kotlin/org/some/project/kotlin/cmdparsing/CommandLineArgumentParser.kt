@@ -164,7 +164,11 @@ object CommandLineArgumentParser {
                             }
                         }
                         flag.type == Boolean::class -> {
-                            parsedObjects[flag.name] = SwitchValue()
+                            if (flag == CommandDefinition.HELP_FLAG) {
+                                return ParseResult.Help(commandDefinition.description())
+                            } else {
+                                parsedObjects[flag.name] = SwitchValue()
+                            }
                         }
                         flag.arity == 0 -> {
                             throw IllegalStateException("Only boolean switches are allowed to have 0 arity.")

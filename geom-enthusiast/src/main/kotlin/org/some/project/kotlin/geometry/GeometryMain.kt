@@ -28,6 +28,7 @@ fun main(args: Array<String>) {
             break
         }
         if (cmdArgs[0] == "help") {
+            // Point and Overview should implement some interface since they definitely act the same
             val helpMessage = Point.commands
                 .map { it.commandDefinition }
                 .joinToString(separator = "\n") { "${it.commandName} -- ${it.description}" }
@@ -35,7 +36,7 @@ fun main(args: Array<String>) {
             continue
         }
 
-        val commandParser = determineOverviewCommand(cmdArgs[0])
+        val commandParser = determinePointCommand(cmdArgs[0])
         if (commandParser == null) {
             println("Could not understand the command")
             continue
@@ -46,6 +47,7 @@ fun main(args: Array<String>) {
         when (commandObject) {
             is ParseResult.ParseError -> println(displayParseError(commandObject.error))
             is ParseResult.ParseSuccess -> println(commandObject.result)
+            is ParseResult.Help -> println(commandObject.helpMessage)
         }
     }
 }

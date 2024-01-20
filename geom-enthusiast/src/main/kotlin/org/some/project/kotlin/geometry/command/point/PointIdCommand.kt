@@ -6,7 +6,7 @@ import org.some.project.kotlin.cmdparsing.ParseResult
 import org.some.project.kotlin.cmdparsing.ValueParseObject
 
 data object PointIdCommand : CommandObjectParser<PointIdCommand> {
-    override val commandDefinition = CommandDefinition("id", description = "Show figure ID")
+    override val commandDefinition = CommandDefinition("id", description = "Show point ID")
 
     override fun parse(arguments: ValueParseObject): ParseResult<PointIdCommand> {
         return ParseResult.ParseSuccess(this)
