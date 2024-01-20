@@ -27,12 +27,19 @@ fun main(args: Array<String>) {
             println("Have a nice day!")
             break
         }
-        val commandParser = determinePointCommand(cmdArgs[0])
+        if (cmdArgs[0] == "help") {
+            val helpMessage = Overview.commands
+                .map { it.commandDefinition }
+                .joinToString(separator = "\n") { "${it.commandName} -- ${it.description}" }
+            println(helpMessage)
+            continue
+        }
+
+        val commandParser = determineOverviewCommand(cmdArgs[0])
         if (commandParser == null) {
             println("Could not understand the command")
             continue
         }
-        val cmdDef = commandParser.commandDefinition
 
         val commandObject = CmdParsingFacade.parse(commandParser, cmdArgs)
 

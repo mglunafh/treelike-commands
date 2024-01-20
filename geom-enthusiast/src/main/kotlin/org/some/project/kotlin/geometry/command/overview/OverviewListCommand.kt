@@ -6,7 +6,7 @@ import org.some.project.kotlin.cmdparsing.ParseResult
 import org.some.project.kotlin.cmdparsing.ValueParseObject
 
 data object OverviewListCommand: CommandObjectParser<OverviewListCommand> {
-    override val commandDefinition = CommandDefinition("list")
+    override val commandDefinition = CommandDefinition("list", description = "List available geometric figures")
 
     override fun parse(arguments: ValueParseObject): ParseResult<OverviewListCommand> {
         return ParseResult.ParseSuccess(this)

@@ -8,7 +8,10 @@ import org.some.project.kotlin.cmdparsing.ValueParseObject
 data class OverviewLoadCommand(val filename: String) {
 
     companion object : CommandObjectParser<OverviewLoadCommand> {
-        override val commandDefinition = CommandDefinition("load", 1)
+        override val commandDefinition = CommandDefinition(
+            "load",
+            1,
+            description = "Load geometric figures from a file")
 
         override fun parse(arguments: ValueParseObject): ParseResult<OverviewLoadCommand> {
             return ParseResult.ParseSuccess(OverviewLoadCommand(arguments.positionalArguments[0]))

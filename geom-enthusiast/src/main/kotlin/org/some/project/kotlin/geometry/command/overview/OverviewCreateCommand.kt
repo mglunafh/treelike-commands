@@ -6,7 +6,10 @@ import org.some.project.kotlin.geometry.command.FigureType
 data class OverviewCreateCommand(val fig: FigureType) {
 
     companion object: CommandObjectParser<OverviewCreateCommand> {
-        override val commandDefinition = CommandDefinition("create", 1)
+        override val commandDefinition = CommandDefinition(
+            "create",
+            1,
+            description = "Create a geometric figure")
 
         override fun parse(arguments: ValueParseObject): ParseResult<OverviewCreateCommand> {
             val figure = arguments.positionalArguments[0]
@@ -18,8 +21,6 @@ data class OverviewCreateCommand(val fig: FigureType) {
     }
 
     data class NotAFigure(val arg: String) : CustomValidationError() {
-        override fun getMessage(): String {
-            return "Command 'create': argument '$arg' is not a figure or is not supported."
-        }
+        override fun getMessage() = "Command 'create': argument '$arg' is not a figure or is not supported."
     }
 }

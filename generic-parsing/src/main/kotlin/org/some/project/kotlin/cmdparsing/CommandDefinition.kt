@@ -6,16 +6,17 @@ data class CommandDefinition(
     val commandName: String,
     val requiredPositionalArguments: Int,
     val positionalArguments: Int,
-    val paramDefinitions: List<ParameterDefinition<out Any>> = listOf()
+    val paramDefinitions: List<ParameterDefinition<out Any>> = listOf(),
+    val description: String = ""
 ) {
 
-    constructor(commandName: String) : this(commandName, 0, 0, listOf())
+    constructor(commandName: String, description: String = "") : this(commandName, 0, 0, listOf(), description)
 
-    constructor(commandName: String, requiredPositionalArguments: Int) :
-            this(commandName, requiredPositionalArguments, requiredPositionalArguments, listOf())
+    constructor(commandName: String, requiredPositionalArguments: Int, description: String = "") :
+            this(commandName, requiredPositionalArguments, requiredPositionalArguments, listOf(), description)
 
-    constructor(commandName: String, paramDefinitions: List<ParameterDefinition<out Any>>) :
-            this(commandName, 0, 0, paramDefinitions)
+    constructor(commandName: String, paramDefinitions: List<ParameterDefinition<out Any>>, description: String = "") :
+            this(commandName, 0, 0, paramDefinitions, description)
 }
 
 open class ParameterDefinition<T : Any>(
