@@ -8,7 +8,7 @@ import org.some.project.kotlin.cmdparsing.ValueParseObject
 data object PointIdCommand : CommandObjectParser<PointIdCommand> {
     override val commandDefinition = CommandDefinition("id")
 
-    override fun parse(valueParseObject: ValueParseObject): ParseResult<PointIdCommand> {
+    override fun parse(arguments: ValueParseObject): ParseResult<PointIdCommand> {
         return ParseResult.ParseSuccess(this)
     }
 }

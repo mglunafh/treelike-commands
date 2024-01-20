@@ -2,8 +2,10 @@ package org.some.project.kotlin.geometry
 
 import org.some.project.kotlin.cmdparsing.*
 import org.some.project.kotlin.geometry.command.Color
+import org.some.project.kotlin.geometry.command.Id
 import org.some.project.kotlin.geometry.command.Name
 import org.some.project.kotlin.geometry.command.Tag
+import org.some.project.kotlin.geometry.command.overview.*
 import org.some.project.kotlin.geometry.command.point.*
 
 fun main(args: Array<String>) {
@@ -11,6 +13,8 @@ fun main(args: Array<String>) {
     Converter.registerConverter(Tag::class) { Tag.toTagOrNull(it) }
     Converter.registerConverter(Color::class) { Color.toColorOrNull(it) }
     Converter.registerConverter(Name::class) { Name.toNameOrNull(it) }
+
+    val figureIds = List(3) { Id.next() }
 
     while (true) {
         print(":> ")
@@ -20,9 +24,10 @@ fun main(args: Array<String>) {
         if (cmdArgs.isEmpty()) continue
 
         if (cmdArgs[0] in listOf("q", "quit", "exit")) {
+            println("Have a nice day!")
             break
         }
-        val commandParser = determineCommand(cmdArgs[0])
+        val commandParser = determineOverviewCommand(cmdArgs[0])
         if (commandParser == null) {
             println("Could not understand the command")
             continue
@@ -40,14 +45,25 @@ fun main(args: Array<String>) {
     }
 }
 
-fun determineCommand(commandName: String): CommandObjectParser<*>? {
+fun determineOverviewCommand(commandName: String): CommandObjectParser<*>? {
     return when (commandName) {
-        "id" -> PointIdCommand
-        "name" -> PointNameCommand
-        "tag" -> PointTagCommand
-        "set" -> PointSetCommand
-        "show" -> PointShowCommand
-        else -> null
+        "list"      -> OverviewListCommand
+        "create"    -> OverviewCreateCommand
+        "save"      -> OverviewSaveCommand
+        "load"      -> OverviewLoadCommand
+        "inspect"   -> OverviewInspectCommand
+        else        -> null
+    }
+}
+
+fun determinePointCommand(commandName: String): CommandObjectParser<*>? {
+    return when (commandName) {
+        "id"    -> PointIdCommand
+        "name"  -> PointNameCommand
+        "tag"   -> PointTagCommand
+        "set"   -> PointSetCommand
+        "show"  -> PointShowCommand
+        else    -> null
     }
 }
 
@@ -59,7 +75,7 @@ fun displayParseError(error: ErrorType): String {
         is TooFewRequiredArguments ->
             "Command '${error.command}': Too few arguments (${error.actualArgCount}) have been passed" +
                     " to the command, it requires at least ${error.requiredArgCount}."
-        is TooManyArguments -> "Too many arguments, expected ${error.argCount} at most, excess: '${error.excess}'."
+        is TooManyArguments -> "Command '${error.command}: Too many arguments, expected ${error.argCount} at most, excess: '${error.excess}'."
         is MissingParameterValue -> "Command '${error.command}': Missing a parameter for flag '${error.paramName}'"
         is MissingParameters -> "Command '${error.command}': Missing one or more arguments for flag '${error.paramName}'"
         ToBeImplemented -> "Is not implemented yet"

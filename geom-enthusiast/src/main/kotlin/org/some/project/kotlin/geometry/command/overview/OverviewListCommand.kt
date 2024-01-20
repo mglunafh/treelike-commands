@@ -1,14 +1,14 @@
-package org.some.project.kotlin.geometry.command.point
+package org.some.project.kotlin.geometry.command.overview
 
 import org.some.project.kotlin.cmdparsing.CommandDefinition
 import org.some.project.kotlin.cmdparsing.CommandObjectParser
 import org.some.project.kotlin.cmdparsing.ParseResult
 import org.some.project.kotlin.cmdparsing.ValueParseObject
 
-data object PointNameCommand: CommandObjectParser<PointNameCommand> {
-    override val commandDefinition = CommandDefinition("name")
+data object OverviewListCommand: CommandObjectParser<OverviewListCommand> {
+    override val commandDefinition = CommandDefinition("list")
 
-    override fun parse(arguments: ValueParseObject): ParseResult<PointNameCommand> {
+    override fun parse(arguments: ValueParseObject): ParseResult<OverviewListCommand> {
         return ParseResult.ParseSuccess(this)
     }
 }

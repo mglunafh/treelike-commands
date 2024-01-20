@@ -8,8 +8,8 @@ data class PointShowCommand(val short: Boolean) {
         val defShort = BooleanSwitchDefinition("--short", default = false)
         override val commandDefinition = CommandDefinition("show", paramDefinitions = listOf(defShort))
 
-        override fun parse(valueParseObject: ValueParseObject): ParseResult<PointShowCommand> {
-            val showShort = valueParseObject.get(defShort)
+        override fun parse(arguments: ValueParseObject): ParseResult<PointShowCommand> {
+            val showShort = arguments.get(defShort)
             return ParseResult.ParseSuccess(PointShowCommand(showShort))
         }
     }

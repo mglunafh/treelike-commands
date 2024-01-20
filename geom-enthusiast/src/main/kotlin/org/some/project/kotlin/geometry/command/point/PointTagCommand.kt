@@ -13,11 +13,11 @@ data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val ta
         override val commandDefinition =
             CommandDefinition("tag", paramDefinitions = listOf(defShow, defAddTags, defRemoveTags))
 
-        override fun parse(valueParseObject: ValueParseObject): ParseResult<PointTagCommand> {
+        override fun parse(arguments: ValueParseObject): ParseResult<PointTagCommand> {
             val presentOptions = mutableListOf<String>()
-            val show = valueParseObject.getNullable(defShow)?.also { presentOptions.add("show") }
-            val tagsToAdd = valueParseObject.getListOrNull(defAddTags)?.also { presentOptions.add("add") }
-            val tagsToRemove = valueParseObject.getListOrNull(defRemoveTags)?.also { presentOptions.add("rm") }
+            val show = arguments.getNullable(defShow)?.also { presentOptions.add("show") }
+            val tagsToAdd = arguments.getListOrNull(defAddTags)?.also { presentOptions.add("add") }
+            val tagsToRemove = arguments.getListOrNull(defRemoveTags)?.also { presentOptions.add("rm") }
 
             return when {
                 presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(commandDefinition.commandName))

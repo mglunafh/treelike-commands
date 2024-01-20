@@ -15,11 +15,11 @@ data class PointSetCommand(val name: Name?, val color: Color?, val tags: List<Ta
         override val commandDefinition =
             CommandDefinition("set", paramDefinitions = listOf(defName, defColor, defTags))
 
-        override fun parse(valueParseObject: ValueParseObject): ParseResult<PointSetCommand> {
+        override fun parse(arguments: ValueParseObject): ParseResult<PointSetCommand> {
             val presentOptions = mutableListOf<String>()
-            val name = valueParseObject.getNullable(defName)?.also { presentOptions.add("name") }
-            val color = valueParseObject.getNullable(defColor)?.also { presentOptions.add("color") }
-            val tags = valueParseObject.getListOrNull(defTags)?.also { presentOptions.add("tag") }
+            val name = arguments.getNullable(defName)?.also { presentOptions.add("name") }
+            val color = arguments.getNullable(defColor)?.also { presentOptions.add("color") }
+            val tags = arguments.getListOrNull(defTags)?.also { presentOptions.add("tag") }
 
             return when {
                 presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(commandDefinition.commandName))
