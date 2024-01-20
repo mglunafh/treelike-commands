@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
             break
         }
         if (cmdArgs[0] == "help") {
-            val helpMessage = Overview.commands
+            val helpMessage = Point.commands
                 .map { it.commandDefinition }
                 .joinToString(separator = "\n") { "${it.commandName} -- ${it.description}" }
             println(helpMessage)

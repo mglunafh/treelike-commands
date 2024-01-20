@@ -12,8 +12,10 @@ data class PointSetCommand(val name: Name?, val color: Color?, val tags: List<Ta
         val defColor = ParameterDefinition("--color", Color::class)
         val defTags = ParameterDefinition("--tag", Tag::class, delimiter = ",")
 
-        override val commandDefinition =
-            CommandDefinition("set", listOf(defName, defColor, defTags))
+        override val commandDefinition = CommandDefinition(
+            "set",
+            listOf(defName, defColor, defTags),
+            description = "Set point properties")
 
         override fun parse(arguments: ValueParseObject): ParseResult<PointSetCommand> {
             val presentOptions = mutableListOf<String>()

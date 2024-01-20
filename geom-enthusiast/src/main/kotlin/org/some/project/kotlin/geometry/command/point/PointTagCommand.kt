@@ -10,8 +10,10 @@ data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val ta
         val defAddTags = ParameterDefinition("--add", Tag::class, delimiter = ",")
         val defRemoveTags = ParameterDefinition("--rm", Tag::class, delimiter = ",")
 
-        override val commandDefinition =
-            CommandDefinition("tag", paramDefinitions = listOf(defShow, defAddTags, defRemoveTags))
+        override val commandDefinition = CommandDefinition(
+            "tag",
+            listOf(defShow, defAddTags, defRemoveTags),
+            description = "Perform one of show/add/remove operations on tags")
 
         override fun parse(arguments: ValueParseObject): ParseResult<PointTagCommand> {
             val presentOptions = mutableListOf<String>()
