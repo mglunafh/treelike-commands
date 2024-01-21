@@ -1,8 +1,10 @@
 package org.some.project.kotlin.geometry.command.overview
 
-object Overview {
+import org.some.project.kotlin.geometry.command.Scene
 
-    val commands = listOf(
+object OverviewScene : Scene {
+
+    override val commandParsers = listOf(
         OverviewListCommand,
         OverviewCreateCommand,
         OverviewInspectCommand,

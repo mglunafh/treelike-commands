@@ -1,12 +1,8 @@
 package org.some.project.kotlin.geometry
 
 import org.some.project.kotlin.cmdparsing.*
-import org.some.project.kotlin.geometry.command.Color
-import org.some.project.kotlin.geometry.command.Id
-import org.some.project.kotlin.geometry.command.Name
-import org.some.project.kotlin.geometry.command.Tag
-import org.some.project.kotlin.geometry.command.overview.*
-import org.some.project.kotlin.geometry.command.point.*
+import org.some.project.kotlin.geometry.command.*
+import org.some.project.kotlin.geometry.command.point.PointScene
 
 fun main(args: Array<String>) {
     print("Hello, Geometry enthusiast! ")
@@ -27,16 +23,17 @@ fun main(args: Array<String>) {
             println("Have a nice day!")
             break
         }
+        val scene: Scene = PointScene
+
         if (cmdArgs[0] == "help") {
-            // Point and Overview should implement some interface since they definitely act the same
-            val helpMessage = Point.commands
+            val helpMessage = scene.commandParsers
                 .map { it.commandDefinition }
                 .joinToString(separator = "\n") { "${it.commandName} -- ${it.description}" }
             println(helpMessage)
             continue
         }
 
-        val commandParser = determinePointCommand(cmdArgs[0])
+        val commandParser = scene.determineCommandParser(cmdArgs[0])
         if (commandParser == null) {
             println("Could not understand the command")
             continue
@@ -49,28 +46,6 @@ fun main(args: Array<String>) {
             is ParseResult.ParseSuccess -> println(commandObject.result)
             is ParseResult.Help -> println(commandObject.helpMessage)
         }
-    }
-}
-
-fun determineOverviewCommand(commandName: String): CommandObjectParser<*>? {
-    return when (commandName) {
-        "list"      -> OverviewListCommand
-        "create"    -> OverviewCreateCommand
-        "save"      -> OverviewSaveCommand
-        "load"      -> OverviewLoadCommand
-        "inspect"   -> OverviewInspectCommand
-        else        -> null
-    }
-}
-
-fun determinePointCommand(commandName: String): CommandObjectParser<*>? {
-    return when (commandName) {
-        "id"    -> PointIdCommand
-        "name"  -> PointNameCommand
-        "tag"   -> PointTagCommand
-        "set"   -> PointSetCommand
-        "show"  -> PointShowCommand
-        else    -> null
     }
 }
 
