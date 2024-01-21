@@ -8,9 +8,14 @@ import org.some.project.kotlin.geometry.command.Tag
 data class PointSetCommand(val name: Name?, val color: Color?, val tags: List<Tag>?) {
 
     companion object : CommandObjectParser<PointSetCommand> {
-        val defName = ParameterDefinition("--name", Name::class)
-        val defColor = ParameterDefinition("--color", Color::class)
-        val defTags = ParameterDefinition("--tag", Tag::class, delimiter = ",")
+        private val defName = ParameterDefinition("--name", Name::class, description = "Appropriate name to set")
+        private val defColor = ParameterDefinition("--color", Color::class, description = "Color to set")
+        private val defTags = ParameterDefinition(
+            "--tag",
+            Tag::class,
+            delimiter = ",",
+            description = "List of comma-separated tags to set"
+        )
 
         override val commandDefinition = CommandDefinition(
             "set",

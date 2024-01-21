@@ -5,7 +5,7 @@ import org.some.project.kotlin.cmdparsing.*
 data class PointShowCommand(val short: Boolean) {
 
     companion object: CommandObjectParser<PointShowCommand> {
-        val defShort = BooleanSwitchDefinition("--short", default = false)
+        val defShort = BooleanSwitchDefinition("--short", default = false, description = "Show info in concise form")
         override val commandDefinition = CommandDefinition(
             "show",
             listOf(defShort),

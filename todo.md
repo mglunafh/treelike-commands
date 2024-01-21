@@ -8,7 +8,6 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - add 'description' to the Point parameters
   - add 'Scene' / 'Hierarchy' interface for Overview and Point
   - interface 'CommandObjectParser' should include polymorphic validation calls
   - think about positional arguments which currently do not support type conversions
