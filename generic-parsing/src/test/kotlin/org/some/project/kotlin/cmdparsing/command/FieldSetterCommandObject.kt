@@ -26,7 +26,8 @@ data class FieldSetterCommandObject(
                 tagDefinition,
                 readOnlyDefinition,
                 personDefinition
-            )
+            ),
+            description = "Field setter command object"
         )
 
         fun parse(values: ValueParseObject): FieldSetterCommandObject {

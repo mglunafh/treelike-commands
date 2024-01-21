@@ -52,8 +52,15 @@ class PersonParsingTest {
         assertEquals(expected, validatedResult.error)
     }
 
+    @ParameterizedTest
+    @MethodSource("helpMessages")
+    fun `Test help message`(argLine: String) {
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(argLine))
+        require(parseResult is ParseResult.Help)
+    }
+
     companion object {
-        const val COMMAND_NAME = "person"
+        private const val COMMAND_NAME = "person"
         val DEFINITION = PersonObject.commandDefinition
 
         @JvmStatic
@@ -127,9 +134,9 @@ class PersonParsingTest {
                 "person Anton --age 35 --kids Sonny,Lenny,Jeany --hair-color blue" to tooFewArgs,
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton" to tooFewArgs,
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton --coord " to
-                        MissingParameters(COMMAND_NAME, "--coord"),
+                        MissingParameters(COMMAND_NAME, "--coord", 2),
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton --coord 1" to
-                        MissingParameters(COMMAND_NAME, "--coord"),
+                        MissingParameters(COMMAND_NAME, "--coord", 2),
                 "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue Anton --coord 1 2" to tooFewArgs
             )
         }
@@ -142,6 +149,16 @@ class PersonParsingTest {
                         ValueConversionFailed(COMMAND_NAME, "--coord", "one, two", Double::class),
                 "person 1 2 --age 35 --kids Sonny,Lenny,Jeany --hair-color blue --coord Anton Antonov" to
                         ValueConversionFailed(COMMAND_NAME, "--coord", "Anton, Antonov", Double::class)
+            )
+        }
+
+        @JvmStatic
+        fun helpMessages(): List<String> {
+            return listOf(
+                "person --help",
+                "person --id 10 --help",        // <- this one is funny: "--id" and "10" got shoved into positional args
+                "person --help Anton Antonov",
+                "person --age 35 --kids Sonny,Lenny,Jeany --hair-color blue --help"
             )
         }
     }

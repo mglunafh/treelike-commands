@@ -54,6 +54,15 @@ class StrictFiledSetterParsingTest {
         assertEquals(expectedError, validationResult.error)
     }
 
+    @ParameterizedTest
+    @MethodSource("helpMessages")
+    fun `Test help messages`(line: String) {
+        val parseResult = CommandLineArgumentParser.parse(DEFINITION, Tokenizer.tokenize(line))
+        require(parseResult is ParseResult.Help) {
+            "Expected help message, got $parseResult instead."
+        }
+    }
+
     companion object {
         const val COMMAND_NAME = "set"
         val DEFINITION = StrictSetterCommand.commandDefinition
@@ -92,16 +101,20 @@ class StrictFiledSetterParsingTest {
         fun parsingErrors(): List<Pair<String, ErrorType>> {
             return listOf(
                 "set --id " to MissingParameterValue(COMMAND_NAME, "--id"),
+                "set --id --help" to MissingParameterValue(COMMAND_NAME, "--id"),
                 "ste --id 1" to WrongCommand(COMMAND_NAME, "ste"),
                 "set --id  14 --name" to MissingParameterValue(COMMAND_NAME, "--name"),
+                "set --name --id  14" to MissingParameterValue(COMMAND_NAME, "--name"),
+                "set --id --name Slam" to MissingParameterValue(COMMAND_NAME, "--id"),
                 "set -- id 14 --name Goobis" to TooManyArguments(COMMAND_NAME, 0, "--"),
                 "set --id 14 --name Goobis --height " to MissingParameterValue(COMMAND_NAME, "--height"),
+                "set --id 14 --name Goobis --color --help" to MissingParameterValue(COMMAND_NAME, "--color"),
                 "set --id 14 --name Goobis --color green --tag" to
                         MissingParameterValue(COMMAND_NAME, "--tag"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --no-read-only" to
                         TooManyArguments(COMMAND_NAME, 0, "--no-read-only"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --person Anton" to
-                        MissingParameters(COMMAND_NAME, "--person")
+                        MissingParameters(COMMAND_NAME, "--person", 2)
             )
         }
 
@@ -121,6 +134,15 @@ class StrictFiledSetterParsingTest {
                         ValueConversionFailed(COMMAND_NAME, "--tag", "__luke", Tag::class),
                 "set --id 14 --name Goobis --surname Kazakh --color green --tag pook,guke;luke" to
                         ValueConversionFailed(COMMAND_NAME, "--tag", "guke;luke", Tag::class))
+        }
+
+        @JvmStatic
+        fun helpMessages(): List<String> {
+            return listOf(
+                "set --help",
+                "set --help --id",
+                "set --color slam --tag guke;luke --help"
+            )
         }
     }
 }

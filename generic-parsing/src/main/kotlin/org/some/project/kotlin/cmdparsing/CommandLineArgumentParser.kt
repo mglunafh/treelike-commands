@@ -235,7 +235,7 @@ object CommandLineArgumentParser {
                 }
             }
             StateMachine.UNARY_FLAG -> ParseError(MissingParameterValue(commandName, currOption!!.name))
-            StateMachine.LONG_FLAG -> ParseError(MissingParameters(commandName, currOption!!.name))
+            StateMachine.LONG_FLAG -> ParseError(MissingParameters(commandName, currOption!!.name, currOption.arity))
         }
     }
 

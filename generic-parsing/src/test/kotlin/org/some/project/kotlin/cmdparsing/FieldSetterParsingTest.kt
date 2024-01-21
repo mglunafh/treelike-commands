@@ -51,9 +51,18 @@ class FieldSetterParsingTest {
         assertEquals(expectedError, validationResult.error)
     }
 
+    @ParameterizedTest
+    @MethodSource("helpMessages")
+    fun `Test help message`(argLine: String) {
+        val parseResult = CommandLineArgumentParser.parse(COMMAND_DEFINITION, Tokenizer.tokenize(argLine))
+        require(parseResult is ParseResult.Help) {
+            "Expected Help message, got $parseResult instead"
+        }
+    }
+
     companion object {
 
-        const val COMMAND_NAME = "set"
+        private const val COMMAND_NAME = "set"
         val COMMAND_DEFINITION = FieldSetterCommandObject.fieldSetterCommandDefinition
 
         @JvmStatic
@@ -70,6 +79,7 @@ class FieldSetterParsingTest {
         @JvmStatic
         fun positiveCases(): List<Pair<String, FieldSetterCommandObject>> {
             return listOf(
+                "set" to FieldSetterCommandObject(null, null, Color.WHITE),
                 "set --id  14 --name Goobis" to FieldSetterCommandObject(14, "Goobis", Color.WHITE),
                 "set --read-only" to  FieldSetterCommandObject(null, null, Color.WHITE, readOnly = true),
                 "set --id 14 --name Goobis --id 15 --read-only" to FieldSetterCommandObject(15, "Goobis", Color.WHITE, readOnly = true),
@@ -87,6 +97,8 @@ class FieldSetterParsingTest {
         fun parsingErrors(): List<Pair<String, ErrorType>> {
             return listOf(
                 "set --id " to MissingParameterValue(COMMAND_NAME, "--id"),
+                "set --id --name Goobis" to MissingParameterValue(COMMAND_NAME, "--id"),
+                "set --id --help" to MissingParameterValue(COMMAND_NAME, "--id"),
                 "ste --id 1" to WrongCommand(COMMAND_NAME, "ste"),
                 "set --id  14 --name" to MissingParameterValue(COMMAND_NAME, "--name"),
                 "set -- id 14 --name Goobis" to TooManyArguments(COMMAND_NAME, 0, "--"),
@@ -97,7 +109,7 @@ class FieldSetterParsingTest {
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --no-read-only" to
                         TooManyArguments(COMMAND_NAME, 0, "--no-read-only"),
                 "set --id 14 --name Goobis --color green --tag pook,guke --read-only --person Anton" to
-                        MissingParameters(COMMAND_NAME, "--person")
+                        MissingParameters(COMMAND_NAME, "--person", 2)
             )
         }
 
@@ -114,6 +126,14 @@ class FieldSetterParsingTest {
                         ValueConversionFailed(COMMAND_NAME, "--tag", "guke;luke", Tag::class),
                 "set --id 14 --name Goobis --color green --tag pook;guke" to
                         ValueConversionFailed(COMMAND_NAME, "--tag", "pook;guke", Tag::class),
+            )
+        }
+
+        @JvmStatic
+        fun helpMessages(): List<String> {
+            return listOf(
+                "set --help",
+                "set --id 10 --help"
             )
         }
     }

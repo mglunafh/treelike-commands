@@ -84,7 +84,7 @@ fun displayParseError(error: ErrorType): String {
                     " to the command, it requires at least ${error.requiredArgCount}."
         is TooManyArguments -> "Command '${error.command}: Too many arguments, expected ${error.argCount} at most, excess: '${error.excess}'."
         is MissingParameterValue -> "Command '${error.command}': Missing a parameter for flag '${error.paramName}'"
-        is MissingParameters -> "Command '${error.command}': Missing one or more arguments for flag '${error.paramName}'"
+        is MissingParameters -> "Command '${error.command}': Missing one or more of ${error.arity} expected arguments for flag '${error.paramName}'"
         ToBeImplemented -> "Is not implemented yet"
         is UnrecognizedFlag -> "Command '${error.command}': Unrecognized flag '${error.flagName}'"
         is WrongCommand -> "Somehow parser for command '${error.expected}' was called for a different command '${error.actual}'"

@@ -27,7 +27,7 @@ data class UnrecognizedFlag(val command: String, val flagName: String) : Generic
 
 data class MissingParameterValue(val command: String, val paramName: String) : GenericParseError()
 
-data class MissingParameters(val command: String, val paramName: String) : GenericParseError()
+data class MissingParameters(val command: String, val paramName: String, val arity: Int) : GenericParseError()
 
 sealed class GenericValidationError : ErrorType()
 
