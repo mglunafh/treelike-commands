@@ -1,8 +1,7 @@
 package org.some.project.kotlin.geometry
 
 import org.some.project.kotlin.cmdparsing.*
-import org.some.project.kotlin.geometry.command.*
-import org.some.project.kotlin.geometry.command.point.PointScene
+import org.some.project.kotlin.geometry.model.*
 
 fun main(args: Array<String>) {
     print("Hello, Geometry enthusiast! ")
@@ -10,7 +9,16 @@ fun main(args: Array<String>) {
     Converter.registerConverter(Color::class) { Color.toColorOrNull(it) }
     Converter.registerConverter(Name::class) { Name.toNameOrNull(it) }
 
-    val figureIds = List(3) { Id.next() }
+    val context = InspectionContext()
+
+    val point1 = Point(Id.next())
+    val point2 = Point(Id.next(), name = Name.toNameOrNull("Slam"))
+    val tags = listOf("incision", "slam-team", "ksm").mapNotNull { Tag.toTagOrNull(it) }
+    val point3 = Point(Id.next(), name = Name.toNameOrNull("Slam_2011"), tags = tags)
+
+    context.add(point1)
+    context.add(point2)
+    context.add(point3)
 
     while (true) {
         print(":> ")
@@ -23,17 +31,16 @@ fun main(args: Array<String>) {
             println("Have a nice day!")
             break
         }
-        val scene: Scene = PointScene
 
         if (cmdArgs[0] == "help") {
-            val helpMessage = scene.commandParsers
+            val helpMessage = context.scene.commandParsers
                 .map { it.commandDefinition }
                 .joinToString(separator = "\n") { "${it.commandName} -- ${it.description}" }
             println(helpMessage)
             continue
         }
 
-        val commandParser = scene.determineCommandParser(cmdArgs[0])
+        val commandParser = context.scene.determineCommandParser(cmdArgs[0])
         if (commandParser == null) {
             println("Could not understand the command")
             continue
@@ -42,9 +49,13 @@ fun main(args: Array<String>) {
         val commandObject = CmdParsingFacade.parse(commandParser, cmdArgs)
 
         when (commandObject) {
+            is ParseResult.ParseSuccess -> Unit
             is ParseResult.ParseError -> println(displayParseError(commandObject.error))
-            is ParseResult.ParseSuccess -> println(commandObject.result)
             is ParseResult.Help -> println(commandObject.helpMessage)
+        }
+
+        if (commandObject is ParseResult.ParseSuccess) {
+            context.execute(commandObject.result)
         }
     }
 }

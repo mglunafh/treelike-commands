@@ -4,9 +4,9 @@ import org.some.project.kotlin.cmdparsing.CommandObjectParser
 
 interface Scene {
 
-    val commandParsers : List<CommandObjectParser<out Any>>
+    val commandParsers : List<CommandObjectParser<out CommandObject>>
 
-    fun determineCommandParser(commandName: String): CommandObjectParser<*>? {
+    fun determineCommandParser(commandName: String): CommandObjectParser<out CommandObject>? {
         return commandParsers.firstOrNull { it.commandDefinition.commandName == commandName }
     }
 }

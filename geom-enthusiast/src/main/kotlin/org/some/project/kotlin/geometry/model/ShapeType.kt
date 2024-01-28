@@ -1,10 +1,10 @@
-package org.some.project.kotlin.geometry.command
+package org.some.project.kotlin.geometry.model
 
-enum class FigureType {
+enum class ShapeType {
     POINT, SECTION, TRIANGLE, RECTANGLE, RHOMBUS, CUBE, PYRAMID;
 
     companion object {
-        fun toFigureOrNull(value: String): FigureType? {
+        fun toShapeOrNull(value: String): ShapeType? {
             return entries.firstOrNull { it.name.equals(value, ignoreCase = true) }
         }
     }

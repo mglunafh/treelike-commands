@@ -8,7 +8,11 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - add 'Scene' / 'Hierarchy' interface for Overview and Point
+  - implement load from file
+  - implement save from file
+  - implement section
+  - implement triangle
+  - implement rectangle
   - interface 'CommandObjectParser' should include polymorphic validation calls
   - think about positional arguments which currently do not support type conversions
   - add javadoc for the rest of the `generic-parsing` submodule:

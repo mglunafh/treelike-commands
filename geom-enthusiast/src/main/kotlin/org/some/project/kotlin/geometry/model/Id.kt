@@ -1,4 +1,4 @@
-package org.some.project.kotlin.geometry.command
+package org.some.project.kotlin.geometry.model
 
 import java.util.concurrent.atomic.AtomicInteger
 

@@ -1,4 +1,4 @@
-package org.some.project.kotlin.geometry.command
+package org.some.project.kotlin.geometry.model
 
 @JvmInline
 value class Name private constructor(val name: String) {
