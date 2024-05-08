@@ -1,0 +1,33 @@
+[
+  {
+    "type": "@point"
+  },
+  {
+    "type": "@point",
+    "name": "Slam"
+  },
+  {
+    "type": "@point",
+    "name": "Slam_2011",
+    "tags": [
+      "incision",
+      "slam-team",
+      "ksm"
+    ]
+  },
+  {
+    "type": "@point",
+    "name": "NEW",
+    "color": "BLUE"
+  },
+  {
+    "type": "@point",
+    "name": "Crysler",
+    "color": "RED",
+    "tags": [
+      "new",
+      "black",
+      "max"
+    ]
+  }
+]

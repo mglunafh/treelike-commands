@@ -4,10 +4,12 @@ interface Shape {
     val type: ShapeType
     val id: Id
 
+    fun show(): String
+
     companion object {
         fun create(type: ShapeType): Shape {
             return when (type) {
-                ShapeType.POINT -> Point(Id.next())
+                ShapeType.POINT -> Point()
                 ShapeType.SECTION -> TODO()
                 ShapeType.TRIANGLE -> TODO()
                 ShapeType.RECTANGLE -> TODO()

@@ -1,5 +1,6 @@
 package org.some.project.kotlin.geometry.model
 
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
 
 @JvmInline
@@ -7,7 +8,7 @@ value class Id private constructor(val id: Int) {
 
     companion object {
         private val sequence = AtomicInteger(0)
-        private val registry = mutableSetOf<Int>()
+        private val registry = Collections.synchronizedSet(mutableSetOf<Int>())
 
         fun next(): Id {
             val result = sequence.incrementAndGet()

@@ -5,6 +5,11 @@ import org.some.project.kotlin.geometry.model.Point
 
 class PointScene(val point: Point) : Scene {
 
+    override val name: String
+        get() {
+            return point.name?.name ?: point.show(short = true)
+        }
+
     override val commandParsers: List<CommandObjectParser<out PointCommand>> = COMMAND_PARSERS
 
     companion object {

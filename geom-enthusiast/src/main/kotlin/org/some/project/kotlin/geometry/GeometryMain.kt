@@ -1,27 +1,20 @@
 package org.some.project.kotlin.geometry
 
 import org.some.project.kotlin.cmdparsing.*
+import org.some.project.kotlin.geometry.command.OverviewCommand
 import org.some.project.kotlin.geometry.model.*
 
 fun main(args: Array<String>) {
-    print("Hello, Geometry enthusiast! ")
+    println("Hello, Geometry enthusiast! ")
     Converter.registerConverter(Tag::class) { Tag.toTagOrNull(it) }
     Converter.registerConverter(Color::class) { Color.toColorOrNull(it) }
     Converter.registerConverter(Name::class) { Name.toNameOrNull(it) }
 
     val context = InspectionContext()
-
-    val point1 = Point(Id.next())
-    val point2 = Point(Id.next(), name = Name.toNameOrNull("Slam"))
-    val tags = listOf("incision", "slam-team", "ksm").mapNotNull { Tag.toTagOrNull(it) }
-    val point3 = Point(Id.next(), name = Name.toNameOrNull("Slam_2011"), tags = tags)
-
-    context.add(point1)
-    context.add(point2)
-    context.add(point3)
+    context.execute(OverviewCommand.OverviewLoadCommand("data\\geom-workspace.json"))
 
     while (true) {
-        print(":> ")
+        print("${context.scene.name} :> ")
         val input = readlnOrNull() ?: continue
         val cmdArgs = Tokenizer.tokenize(input, "\\s+".toRegex())
 

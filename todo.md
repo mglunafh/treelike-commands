@@ -8,8 +8,6 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - implement load from file
-  - implement save from file
   - implement section
   - implement triangle
   - implement rectangle
