@@ -14,6 +14,8 @@ class SectionScene(val section: Section): Scene {
         val COMMAND_PARSERS: List<CommandObjectParser<out SectionCommand>> = listOf(
             SectionCommand.SectionIdCommandParser,
             SectionCommand.SectionNameCommandParser,
+            SectionCommand.SectionColorCommandParser,
+            SectionCommand.SectionTagCommand,
             SectionCommand.SectionSetCommand,
             SectionCommand.SectionShowCommand,
             SectionCommand.SectionInspectCommand,

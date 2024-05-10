@@ -20,6 +20,51 @@ sealed interface SectionCommand : CommandObject {
         override val result = SectionNameCommand
     }
 
+    data object SectionColorCommand : SectionCommand
+
+    data object SectionColorCommandParser : SuccessfulParser<SectionColorCommand> {
+        override val commandDefinition = CommandDefinition("color", description = "Show section color")
+        override val result = SectionColorCommand
+    }
+
+    data class SectionTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val tagsToRemove: List<Tag>?) : SectionCommand {
+
+        companion object : CommandObjectParser<SectionTagCommand> {
+            private val defShow = BooleanSwitchDefinition("--show", description = "Show tags attached to the point")
+            private val defAddTags = ParameterDefinition(
+                "--add",
+                Tag::class,
+                delimiter = ",",
+                description = "Add a list of comma-separated tags to the section"
+            )
+            private val defRemoveTags = ParameterDefinition(
+                "--rm",
+                Tag::class,
+                delimiter = ",",
+                description = "Remove a list of comma-separated tags from the point if possible"
+            )
+
+            override val commandDefinition = CommandDefinition(
+                "tag",
+                listOf(defShow, defAddTags, defRemoveTags),
+                description = "Perform one of show/add/remove operations on section tags"
+            )
+
+            override fun parse(arguments: ValueParseObject): ParseResult<out SectionTagCommand> {
+                val presentOptions = mutableListOf<String>()
+                val show = arguments.getNullable(PointCommand.PointTagCommand.defShow)?.also { presentOptions.add("show") }
+                val tagsToAdd = arguments.getListOrNull(PointCommand.PointTagCommand.defAddTags)?.also { presentOptions.add("add") }
+                val tagsToRemove = arguments.getListOrNull(PointCommand.PointTagCommand.defRemoveTags)?.also { presentOptions.add("rm") }
+
+                return when {
+                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(PointCommand.PointTagCommand.commandDefinition.commandName))
+                    presentOptions.size > 1 -> ParseResult.ParseError(ExclusiveOptions(commandDefinition.commandName, presentOptions))
+                    else -> ParseResult.ParseSuccess(SectionTagCommand(show, tagsToAdd, tagsToRemove))
+                }
+            }
+        }
+    }
+
     data class SectionSetCommand(val name: Name?, val color: Color?, val tags: List<Tag>?) : SectionCommand {
 
         companion object : CommandObjectParser<SectionSetCommand> {

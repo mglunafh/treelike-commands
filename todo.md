@@ -21,7 +21,6 @@
 
 ----
 ## Geometry Enthusiast
-- implement section (color, tag, hierarchy)
 - implement triangle
 - implement rectangle
 - think about adding physical parameters to the models:

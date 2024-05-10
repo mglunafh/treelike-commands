@@ -71,6 +71,7 @@ fun displayParseError(error: ErrorType): String {
         is WrongCommand -> "Somehow parser for command '${error.expected}' was called for a different command '${error.actual}'"
 
         is NoOptions -> "Command '${error.command}': No options have been passed"
+        is ExclusiveOptions -> "Command '${error.command}': Options ${error.options} are mutually exclusive and cannot be used simultaneously"
         is RequiredParameterNotSet -> "Command '${error.command}': Option '${error.paramName}' was not provided with value"
 
         is SwitchValueExpected -> "Command '${error.command}': Could not parse option '${error.option}' since it was not a switch"

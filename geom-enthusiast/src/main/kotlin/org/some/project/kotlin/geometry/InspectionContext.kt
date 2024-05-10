@@ -9,10 +9,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.some.project.kotlin.geometry.command.*
 import org.some.project.kotlin.geometry.command.OverviewCommand.*
-import org.some.project.kotlin.geometry.model.Point
-import org.some.project.kotlin.geometry.model.Section
-import org.some.project.kotlin.geometry.model.Shape
-import org.some.project.kotlin.geometry.model.ShapeType
+import org.some.project.kotlin.geometry.model.*
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
@@ -105,8 +102,31 @@ class InspectionContext {
                 println(point.show(command.short))
             }
             is PointCommand.PointTagCommand -> {
-                val message = point.tags.let { if (it.isEmpty()) "" else it.joinToString(separator = ",") { t -> t.tag } }
-                println(message)
+                require(command.show != null || command.tagsToAdd != null || command.tagsToRemove != null) {
+                    "command 'tag' for points should have at least one of its show/add/rm options set"
+                }
+                when {
+                    command.show != null -> {
+                        val message = point.tags.let { if (it.isEmpty()) "" else it.joinToString(separator = ",") { t -> t.tag } }
+                        println(message)
+                    }
+                    command.tagsToAdd != null -> {
+                        val combinedTags = mutableSetOf<Tag>().apply {
+                            addAll(point.tags)
+                            addAll(command.tagsToAdd)
+                        }
+                        point.tags = combinedTags.toList()
+                    }
+                    command.tagsToRemove != null -> {
+                        val intersection = mutableSetOf<Tag>().apply {
+                            addAll(point.tags)
+                            removeAll(command.tagsToRemove)
+                        }
+                        if (point.tags.size > intersection.size) {
+                            point.tags = intersection.toList()
+                        }
+                    }
+                }
             }
         }
     }
@@ -125,6 +145,36 @@ class InspectionContext {
             }
             SectionCommand.SectionNameCommand -> {
                 println(section.name?.name ?: "This section has no name")
+            }
+            SectionCommand.SectionColorCommand -> {
+                println(section.color)
+            }
+            is SectionCommand.SectionTagCommand -> {
+                require(command.show != null || command.tagsToAdd != null || command.tagsToRemove != null) {
+                    "command 'tag' for sections should have at least one of its show/add/rm options set"
+                }
+                when {
+                    command.show != null -> {
+                        val message = section.tags.let { if (it.isEmpty()) "" else it.joinToString(separator = ",") { t -> t.tag } }
+                        println(message)
+                    }
+                    command.tagsToAdd != null -> {
+                        val combinedTags = mutableSetOf<Tag>().apply {
+                            addAll(section.tags)
+                            addAll(command.tagsToAdd)
+                        }
+                        section.tags = combinedTags.toList()
+                    }
+                    command.tagsToRemove != null -> {
+                        val intersection = mutableSetOf<Tag>().apply {
+                            addAll(section.tags)
+                            removeAll(command.tagsToRemove)
+                        }
+                        if (section.tags.size > intersection.size) {
+                            section.tags = intersection.toList()
+                        }
+                    }
+                }
             }
             is SectionCommand.SectionSetCommand -> {
                 command.name?.also { section.name = it }

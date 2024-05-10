@@ -46,5 +46,32 @@
       "warzone",
       "tarkov"
     ]
+  },
+  {
+    "type": "@section",
+    "point1": {
+      "name": "Hots",
+      "color": "BLUE",
+      "tags": [
+        "linatan",
+        "liming",
+        "kel-thuzadd"
+      ]
+    },
+    "point2": {
+      "name": "Grim-Dawn",
+      "color": "RED",
+      "tags": [
+        "raven",
+        "biggie"
+      ]
+    },
+    "name": "Linatan",
+    "color": "GREEN",
+    "tags": [
+      "phil",
+      "guitar",
+      "armwrestling"
+    ]
   }
 ]

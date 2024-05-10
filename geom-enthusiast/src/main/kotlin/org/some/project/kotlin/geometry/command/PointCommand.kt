@@ -68,6 +68,7 @@ sealed interface PointCommand: CommandObject {
     data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val tagsToRemove: List<Tag>?): PointCommand {
 
         companion object : CommandObjectParser<PointTagCommand> {
+            const val commandName = "tag"
             val defShow = BooleanSwitchDefinition("--show", description = "Show tags attached to the point")
             val defAddTags = ParameterDefinition(
                 "--add",
@@ -83,7 +84,7 @@ sealed interface PointCommand: CommandObject {
             )
 
             override val commandDefinition = CommandDefinition(
-                "tag",
+                commandName,
                 listOf(defShow, defAddTags, defRemoveTags),
                 description = "Perform one of show/add/remove operations on point tags")
 
@@ -94,17 +95,10 @@ sealed interface PointCommand: CommandObject {
                 val tagsToRemove = arguments.getListOrNull(defRemoveTags)?.also { presentOptions.add("rm") }
 
                 return when {
-                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(commandDefinition.commandName))
-                    presentOptions.size > 1 -> ParseResult.ParseError(ExclusiveOptions(presentOptions))
+                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(commandName))
+                    presentOptions.size > 1 -> ParseResult.ParseError(ExclusiveOptions(commandName, presentOptions))
                     else -> ParseResult.ParseSuccess(PointTagCommand(show, tagsToAdd, tagsToRemove))
                 }
-            }
-        }
-
-        data class ExclusiveOptions(val options: List<String>): CustomValidationError() {
-
-            override fun getMessage(): String {
-                return "Options $options are mutually exclusive and cannot be used simultaneously"
             }
         }
     }

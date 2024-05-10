@@ -35,6 +35,8 @@ data class NoOptions(val command: String): GenericValidationError()
 
 data class RequiredParameterNotSet(val command: String, val paramName: String) : GenericValidationError()
 
+data class ExclusiveOptions(val command: String, val options: List<String>): GenericValidationError()
+
 abstract class CustomValidationError: GenericValidationError() {
 
     abstract fun getMessage(): String
