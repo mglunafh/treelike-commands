@@ -10,7 +10,7 @@ interface Shape {
         fun create(type: ShapeType): Shape {
             return when (type) {
                 ShapeType.POINT -> Point()
-                ShapeType.SECTION -> TODO()
+                ShapeType.SECTION -> Section(Point(), Point())
                 ShapeType.TRIANGLE -> TODO()
                 ShapeType.RECTANGLE -> TODO()
                 ShapeType.RHOMBUS -> TODO()

@@ -1,6 +1,7 @@
 package org.some.project.kotlin.geometry.model
 
 import kotlinx.serialization.Serializable
+import java.lang.StringBuilder
 
 @Serializable
 @JvmInline
@@ -18,5 +19,15 @@ value class Tag private constructor(val tag: String) {
 
         fun from(arg: String): Tag = if (arg.matches(TAG_REGEX)) Tag(arg) else
             throw IllegalArgumentException("Value '$arg' does not satisfy the requirements of a valid tag.")
+
+        /**
+         * Helper extension function for StringBuilder which allows to add a list of tags.
+         */
+        fun StringBuilder.appendTags(tags: List<Tag>): StringBuilder {
+            if (tags.isNotEmpty()) {
+                this.append(" ").append(tags.joinToString(prefix = "(", separator = ",", postfix = ")") { it.tag })
+            }
+            return this
+        }
     }
 }

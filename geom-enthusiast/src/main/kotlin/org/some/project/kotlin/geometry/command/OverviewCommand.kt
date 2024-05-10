@@ -26,7 +26,7 @@ sealed interface OverviewCommand: CommandObject {
         }
 
         data class NotAFigure(val arg: String) : CustomValidationError() {
-            override fun getMessage() = "Command 'create': argument '$arg' is not a shape or is not supported."
+            override fun getMessage() = "Command 'create': argument '$arg' is not a shape or not supported."
         }
     }
 

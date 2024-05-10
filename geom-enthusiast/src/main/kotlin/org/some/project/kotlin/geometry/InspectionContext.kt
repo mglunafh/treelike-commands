@@ -10,6 +10,7 @@ import kotlinx.serialization.modules.subclass
 import org.some.project.kotlin.geometry.command.*
 import org.some.project.kotlin.geometry.command.OverviewCommand.*
 import org.some.project.kotlin.geometry.model.Point
+import org.some.project.kotlin.geometry.model.Section
 import org.some.project.kotlin.geometry.model.Shape
 import org.some.project.kotlin.geometry.model.ShapeType
 import java.io.FileInputStream
@@ -26,6 +27,7 @@ class InspectionContext {
         val module = SerializersModule {
             polymorphic(Shape::class) {
                 subclass(Point::class)
+                subclass(Section::class)
             }
         }
         formatter = Json { serializersModule = module }
@@ -42,7 +44,7 @@ class InspectionContext {
         when (command) {
             is OverviewCommand -> overviewAction(command)
             is PointCommand -> pointAction(command)
-            is SectionCommand -> println("Section command: $command")
+            is SectionCommand -> sectionAction(command)
         }
     }
 
@@ -58,6 +60,7 @@ class InspectionContext {
                 shape?.also {
                     val scene = when (it.type) {
                         ShapeType.POINT -> PointScene(it as Point)
+                        ShapeType.SECTION -> SectionScene(it as Section)
                         else -> TODO()
                     }
                     inspectedScenes.add(scene)
@@ -88,10 +91,10 @@ class InspectionContext {
                 inspectedScenes.removeLast()
             }
             PointCommand.PointIdCommand -> {
-                println(point.id)
+                println(point.id.id)
             }
             PointCommand.PointNameCommand -> {
-                println(point.name ?: "This point has no name")
+                println(point.name?.name ?: "This point has no name")
             }
             is PointCommand.PointSetCommand -> {
                 command.name?.also { point.name = it }
@@ -104,6 +107,40 @@ class InspectionContext {
             is PointCommand.PointTagCommand -> {
                 val message = point.tags.let { if (it.isEmpty()) "" else it.joinToString(separator = ",") { t -> t.tag } }
                 println(message)
+            }
+        }
+    }
+
+    private fun sectionAction(command: SectionCommand) {
+        val currentScene = this.scene
+        require(currentScene is SectionScene)
+        val section = currentScene.section
+
+        when (command) {
+            GenericBackCommand.SectionBackCommand -> {
+                inspectedScenes.removeLast()
+            }
+            SectionCommand.SectionIdCommand -> {
+                println(section.id.id)
+            }
+            SectionCommand.SectionNameCommand -> {
+                println(section.name?.name ?: "This section has no name")
+            }
+            is SectionCommand.SectionSetCommand -> {
+                command.name?.also { section.name = it }
+                command.color?.also { section.color = it }
+                command.tags?.also { section.tags = it }
+            }
+            is SectionCommand.SectionShowCommand -> {
+                println(section.show(short = command.short, withTags = command.showTags))
+            }
+            is SectionCommand.SectionInspectCommand -> {
+                val point = if (section.point1.id == command.id) section.point1
+                    else if (section.point2.id == command.id) section.point2 else null
+                point?.also {
+                    val newScene = PointScene(it)
+                    inspectedScenes.add(newScene)
+                }
             }
         }
     }

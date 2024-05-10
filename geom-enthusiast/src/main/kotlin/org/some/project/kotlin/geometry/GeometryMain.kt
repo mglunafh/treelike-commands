@@ -2,7 +2,9 @@ package org.some.project.kotlin.geometry
 
 import org.some.project.kotlin.cmdparsing.*
 import org.some.project.kotlin.geometry.command.OverviewCommand
-import org.some.project.kotlin.geometry.model.*
+import org.some.project.kotlin.geometry.model.Color
+import org.some.project.kotlin.geometry.model.Name
+import org.some.project.kotlin.geometry.model.Tag
 
 fun main(args: Array<String>) {
     println("Hello, Geometry enthusiast! ")

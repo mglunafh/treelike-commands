@@ -8,9 +8,6 @@
   - https://jawher.me/parsing-command-line-arguments-finite-state-machine-backtracking/
 
 - CommandObjectFactory:
-  - implement section
-  - implement triangle
-  - implement rectangle
   - interface 'CommandObjectParser' should include polymorphic validation calls
   - think about positional arguments which currently do not support type conversions
   - add javadoc for the rest of the `generic-parsing` submodule:
@@ -24,6 +21,9 @@
 
 ----
 ## Geometry Enthusiast
+- implement section (color, tag, hierarchy)
+- implement triangle
+- implement rectangle
 - think about adding physical parameters to the models:
   - section length 
   - area of the 2D figures

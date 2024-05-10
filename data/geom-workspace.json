@@ -29,5 +29,22 @@
       "black",
       "max"
     ]
+  },
+  {
+    "type": "@section",
+    "point1": {
+      "name": "WarZone",
+      "color": "RED"
+    },
+    "point2": {
+      "name": "Escape-From-Tarkov",
+      "color": "RED"
+    },
+    "name": "Oleg",
+    "color": "YELLOW",
+    "tags": [
+      "warzone",
+      "tarkov"
+    ]
   }
 ]
