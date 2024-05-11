@@ -25,6 +25,7 @@ class InspectionContext {
             polymorphic(Shape::class) {
                 subclass(Point::class)
                 subclass(Section::class)
+                subclass(Triangle::class)
             }
         }
         formatter = Json { serializersModule = module }
@@ -33,15 +34,12 @@ class InspectionContext {
     val scene: Scene
         get() = if (inspectedScenes.isNotEmpty()) inspectedScenes.last() else OverviewScene
 
-    fun add(shape: Shape) {
-        shapes.add(shape)
-    }
-
     fun execute(command: CommandObject) {
         when (command) {
             is OverviewCommand -> overviewAction(command)
             is PointCommand -> pointAction(command)
             is SectionCommand -> sectionAction(command)
+            is TriangleCommand -> triangleAction(command)
         }
     }
 
@@ -58,6 +56,7 @@ class InspectionContext {
                     val scene = when (it.type) {
                         ShapeType.POINT -> PointScene(it as Point)
                         ShapeType.SECTION -> SectionScene(it as Section)
+                        ShapeType.TRIANGLE -> TriangleScene(it as Triangle)
                         else -> TODO()
                     }
                     inspectedScenes.add(scene)
@@ -185,12 +184,53 @@ class InspectionContext {
                 println(section.show(short = command.short, withTags = command.showTags))
             }
             is SectionCommand.SectionInspectCommand -> {
-                val point = if (section.point1.id == command.id) section.point1
-                    else if (section.point2.id == command.id) section.point2 else null
-                point?.also {
-                    val newScene = PointScene(it)
-                    inspectedScenes.add(newScene)
+                // TODO possible errors
+                listOf(section.point1, section.point2)
+                    .firstOrNull { it.id == command.id }
+                    ?.also { inspectedScenes.add(PointScene(it)) }
+            }
+        }
+    }
+
+    private fun triangleAction(command: TriangleCommand) {
+        val currentScene = this.scene
+        require(currentScene is TriangleScene)
+        val triangle = currentScene.triangle
+
+        when(command) {
+            GenericBackCommand.TriangleBackCommand -> {
+                inspectedScenes.removeLast()
+            }
+            TriangleCommand.TriangleIdCommand -> {
+                println(triangle.id.id)
+            }
+            TriangleCommand.TriangleNameCommand -> {
+                println(triangle.name?.name ?: "This triangle has no name")
+            }
+            TriangleCommand.TriangleColorCommand -> {
+                println(triangle.color)
+            }
+            is TriangleCommand.TriangleShowCommand -> {
+                if (command.sectionId != null) {
+                    //TODO possible errors
+                    listOf(triangle.side1, triangle.side2, triangle.side3)
+                        .firstOrNull { it.id == command.sectionId }
+                        ?.show(short = command.short, withTags = command.showTags)
+                        ?.also { sideView -> println(sideView) }
+                } else {
+                    println(triangle.show(short = command.short, withTags = command.showTags))
                 }
+            }
+            is TriangleCommand.TriangleSetCommand -> {
+                command.name?.also { triangle.name = it }
+                command.color?.also { triangle.color = it }
+                command.tags?.also { triangle.tags = it }
+            }
+            is TriangleCommand.TriangleInspectCommand -> {
+                // TODO possible errors
+                listOf(triangle.side1, triangle.side2, triangle.side3)
+                    .firstOrNull { it.id == command.id }
+                    ?.also { inspectedScenes.add(SectionScene(it)) }
             }
         }
     }

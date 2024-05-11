@@ -1,7 +1,13 @@
 package org.some.project.kotlin.geometry.model
 
-enum class ShapeType {
-    POINT, SECTION, TRIANGLE, RECTANGLE, RHOMBUS, CUBE, PYRAMID;
+enum class ShapeType(val showName: String) {
+    POINT("Point"),
+    SECTION("Section"),
+    TRIANGLE("Triangle"),
+    RECTANGLE("Rectangle"),
+    RHOMBUS("Rhombus"),
+    CUBE("Cube"),
+    PYRAMID("Pyramid");
 
     companion object {
         fun toShapeOrNull(value: String): ShapeType? {

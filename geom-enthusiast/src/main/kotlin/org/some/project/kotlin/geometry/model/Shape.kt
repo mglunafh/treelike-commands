@@ -11,7 +11,7 @@ interface Shape {
             return when (type) {
                 ShapeType.POINT -> Point()
                 ShapeType.SECTION -> Section(Point(), Point())
-                ShapeType.TRIANGLE -> TODO()
+                ShapeType.TRIANGLE -> Triangle(Section(Point(), Point()), Section(Point(), Point()), Section(Point(), Point()))
                 ShapeType.RECTANGLE -> TODO()
                 ShapeType.RHOMBUS -> TODO()
                 ShapeType.CUBE -> TODO()

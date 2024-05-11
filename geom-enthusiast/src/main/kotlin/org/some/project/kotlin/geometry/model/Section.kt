@@ -24,7 +24,7 @@ data class Section(
 
     fun show(short: Boolean = false, withTags: Boolean = false): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append("Section[${id.id}]")
+        stringBuilder.append("${type.showName}[${id.id}]")
         name?.also { stringBuilder.append(" \"${it.name}\"") }
 
         if (withTags) {

@@ -80,7 +80,7 @@ sealed interface SectionCommand : CommandObject {
             override val commandDefinition = CommandDefinition(
                 "set",
                 listOf(defName, defColor, defTags),
-                description = "Set point properties"
+                description = "Set section properties"
             )
 
             override fun parse(arguments: ValueParseObject): ParseResult<SectionSetCommand> {

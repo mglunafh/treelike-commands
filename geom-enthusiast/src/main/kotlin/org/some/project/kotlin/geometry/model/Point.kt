@@ -23,7 +23,7 @@ data class Point(
 
     fun show(short: Boolean = false): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append("Point[${id.id}]")
+        stringBuilder.append("${type.showName}[${id.id}]")
         name?.also { stringBuilder.append(" \"${it.name}\"") }
         if (!short) {
             stringBuilder.appendTags(tags)

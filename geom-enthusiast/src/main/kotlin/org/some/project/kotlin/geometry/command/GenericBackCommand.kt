@@ -15,4 +15,8 @@ sealed class GenericBackCommand<T : CommandObject> : CommandObjectParser<T>, Suc
     data object SectionBackCommand : GenericBackCommand<SectionBackCommand>(), SectionCommand, SuccessfulParser<SectionBackCommand> {
         override val result = this
     }
+
+    data object TriangleBackCommand : GenericBackCommand<TriangleBackCommand>(), TriangleCommand, SuccessfulParser<TriangleBackCommand> {
+        override val result = this
+    }
 }

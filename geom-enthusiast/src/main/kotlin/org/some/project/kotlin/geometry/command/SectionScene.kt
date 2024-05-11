@@ -6,7 +6,7 @@ import org.some.project.kotlin.geometry.model.Section
 class SectionScene(val section: Section): Scene {
 
     override val name: String
-        get() = section.name?.name ?: section.show(short = true, withTags = false)
+        get() = name(section.type, section.id, section.name, section.color)
 
     override val commandParsers: List<CommandObjectParser<out SectionCommand>> = COMMAND_PARSERS
 

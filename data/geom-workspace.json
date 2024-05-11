@@ -73,5 +73,28 @@
       "guitar",
       "armwrestling"
     ]
+  },
+  {
+    "type": "@triangle",
+    "side1": {
+      "point1": {},
+      "point2": {},
+      "name": "adenine"
+    },
+    "side2": {
+      "point1": {},
+      "point2": {},
+      "name": "uracil"
+    },
+    "side3": {
+      "point1": {},
+      "point2": {},
+      "name": "guanine"
+    },
+    "name": "Start-Codon",
+    "color": "BLUE",
+    "tags": [
+      "methionine"
+    ]
   }
 ]
