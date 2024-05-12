@@ -66,7 +66,7 @@
         "biggie"
       ]
     },
-    "name": "Linatan",
+    "name": "Dlinnotan",
     "color": "GREEN",
     "tags": [
       "phil",
@@ -77,8 +77,21 @@
   {
     "type": "@triangle",
     "side1": {
-      "point1": {},
-      "point2": {},
+      "point1": {
+        "name": "pentose-7-9-N",
+        "color": "GREEN",
+        "tags": [
+          "adenosin",
+          "deoxyadenosine"
+        ]
+      },
+      "point2": {
+        "name": "hexose-6-amine",
+        "color": "RED",
+        "tags": [
+          "hydrogen-bonds"
+        ]
+      },
       "name": "adenine"
     },
     "side2": {

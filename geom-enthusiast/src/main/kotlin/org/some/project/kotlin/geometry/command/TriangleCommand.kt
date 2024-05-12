@@ -1,6 +1,8 @@
 package org.some.project.kotlin.geometry.command
 
 import org.some.project.kotlin.cmdparsing.*
+import org.some.project.kotlin.cmdparsing.ParseResult.ParseError
+import org.some.project.kotlin.cmdparsing.ParseResult.ParseSuccess
 import org.some.project.kotlin.geometry.SuccessfulParser
 import org.some.project.kotlin.geometry.model.Color
 import org.some.project.kotlin.geometry.model.Id
@@ -11,39 +13,49 @@ sealed interface TriangleCommand : CommandObject {
 
     data object TriangleIdCommand : TriangleCommand
 
-    data object TriangleIdCommandParser : SuccessfulParser<TriangleIdCommand> {
+    object TriangleIdCommandParser : SuccessfulParser<TriangleIdCommand> {
         override val commandDefinition = CommandDefinition("id", description = "Show triangle ID")
         override val result = TriangleIdCommand
     }
 
     data object TriangleNameCommand : TriangleCommand
 
-    data object TriangleNameCommandParser : SuccessfulParser<TriangleNameCommand> {
+    object TriangleNameCommandParser : SuccessfulParser<TriangleNameCommand> {
         override val commandDefinition = CommandDefinition("name", description = "Show triangle name if it's set")
         override val result = TriangleNameCommand
     }
 
     data object TriangleColorCommand : TriangleCommand
 
-    data object TriangleColorCommandParser : SuccessfulParser<TriangleColorCommand> {
+    object TriangleColorCommandParser : SuccessfulParser<TriangleColorCommand> {
         override val commandDefinition = CommandDefinition("color", description = "Show triangle color")
         override val result = TriangleColorCommand
     }
 
-    data class TriangleShowCommand(val short: Boolean, val showTags: Boolean, val sectionId: Id?) : TriangleCommand {
+    sealed class TriangleGeneralShowCommand : TriangleCommand
+    data class TriangleShowCommand(val short: Boolean, val showTags: Boolean) : TriangleGeneralShowCommand()
+    data class TriangleShowSectionCommand(val sideId: Id, val short: Boolean, val showTags: Boolean) : TriangleGeneralShowCommand()
+    data class TriangleShowPointCommand(val pointId: Id, val short: Boolean) : TriangleGeneralShowCommand()
 
-        companion object : CommandObjectParser<TriangleShowCommand> {
-            private val defShort = BooleanSwitchDefinition("--short", default = false, description = "Show info in concise form")
-            private val defShowTags = BooleanSwitchDefinition("--with-tags", default = false, description = "Show tags of the objects")
-            private val defSectionId = IntFlagDefinition("--side", description = "Shows info about " )
-            override val commandDefinition = CommandDefinition("show", listOf(defShort, defShowTags, defSectionId),
-                description = "Show information about the triangle")
+    object TriangleShowCommandParser : CommandObjectParser<TriangleGeneralShowCommand> {
+        private val defShort = BooleanSwitchDefinition("--short", default = false, description = "Show info in concise form")
+        private val defShowTags = BooleanSwitchDefinition("--with-tags", default = false, description = "Show tags of the objects")
+        private val defSectionId = IntFlagDefinition("--side", description = "Shows info about specific triangle side")
+        private val defPointId = IntFlagDefinition("--point", description = "Shows info about specific triangle point")
+        override val commandDefinition = CommandDefinition("show", listOf(defShort, defShowTags, defSectionId, defPointId),
+            description = "Show information about the triangle")
 
-            override fun parse(arguments: ValueParseObject): ParseResult<out TriangleShowCommand> {
-                val short = arguments.get(defShort)
-                val withTags = arguments.get(defShowTags)
-                val sectionId = arguments.getNullable(defSectionId)?. let { Id[it] }
-                return ParseResult.ParseSuccess(TriangleShowCommand(short, withTags, sectionId))
+        override fun parse(arguments: ValueParseObject): ParseResult<out TriangleGeneralShowCommand> {
+            val short = arguments.get(defShort)
+            val withTags = arguments.get(defShowTags)
+            val sectionId = arguments.getNullable(defSectionId)?.let { Id[it] }
+            val pointId = arguments.getNullable(defPointId)?.let { Id[it] }
+
+            return when {
+                sectionId != null && pointId != null -> ParseError(ExclusiveOptions(commandDefinition.commandName, listOf(defSectionId.name, defPointId.name)))
+                sectionId != null -> ParseSuccess(TriangleShowSectionCommand(sectionId, short, withTags))
+                pointId != null -> ParseSuccess(TriangleShowPointCommand(pointId, short))
+                else -> ParseSuccess(TriangleShowCommand(short, withTags))
             }
         }
     }
@@ -73,8 +85,8 @@ sealed interface TriangleCommand : CommandObject {
                 val tags = arguments.getListOrNull(defTags)?.also { presentOptions.add("tag") }
 
                 return when {
-                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(commandDefinition.commandName))
-                    else -> ParseResult.ParseSuccess(TriangleSetCommand(name, color, tags))
+                    presentOptions.isEmpty() -> ParseError(NoOptions(commandDefinition.commandName))
+                    else -> ParseSuccess(TriangleSetCommand(name, color, tags))
                 }
             }
         }
@@ -91,11 +103,11 @@ sealed interface TriangleCommand : CommandObject {
 
             override fun parse(arguments: ValueParseObject): ParseResult<out TriangleInspectCommand> {
                 val pointIdStr = arguments.positionalArguments[0]
-                val id = pointIdStr.toIntOrNull() ?: return ParseResult.ParseError(CouldNotConvertId(pointIdStr))
+                val id = pointIdStr.toIntOrNull() ?: return ParseError(CouldNotConvertId(pointIdStr))
 
                 return Id[id]?.let {
-                    ParseResult.ParseSuccess(TriangleInspectCommand(it))
-                } ?: ParseResult.ParseError(SectionDoesNotExist(id))
+                    ParseSuccess(TriangleInspectCommand(it))
+                } ?: ParseError(SectionDoesNotExist(id))
             }
 
             data class CouldNotConvertId(val arg: String) : CustomValidationError() {

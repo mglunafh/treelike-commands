@@ -1,6 +1,8 @@
 package org.some.project.kotlin.geometry.command
 
 import org.some.project.kotlin.cmdparsing.*
+import org.some.project.kotlin.cmdparsing.ParseResult.ParseError
+import org.some.project.kotlin.cmdparsing.ParseResult.ParseSuccess
 import org.some.project.kotlin.geometry.SuccessfulParser
 import org.some.project.kotlin.geometry.model.*
 
@@ -27,7 +29,7 @@ sealed interface SectionCommand : CommandObject {
         override val result = SectionColorCommand
     }
 
-    data class SectionTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val tagsToRemove: List<Tag>?) : SectionCommand {
+    sealed class SectionTagCommand : SectionCommand {
 
         companion object : CommandObjectParser<SectionTagCommand> {
             private val defShow = BooleanSwitchDefinition("--show", description = "Show tags attached to the point")
@@ -52,18 +54,24 @@ sealed interface SectionCommand : CommandObject {
 
             override fun parse(arguments: ValueParseObject): ParseResult<out SectionTagCommand> {
                 val presentOptions = mutableListOf<String>()
-                val show = arguments.getNullable(PointCommand.PointTagCommand.defShow)?.also { presentOptions.add("show") }
-                val tagsToAdd = arguments.getListOrNull(PointCommand.PointTagCommand.defAddTags)?.also { presentOptions.add("add") }
-                val tagsToRemove = arguments.getListOrNull(PointCommand.PointTagCommand.defRemoveTags)?.also { presentOptions.add("rm") }
+                val show = arguments.getNullable(defShow)?.also { presentOptions.add("show") }
+                val tagsToAdd = arguments.getListOrNull(defAddTags)?.also { presentOptions.add("add") }
+                val tagsToRemove = arguments.getListOrNull(defRemoveTags)?.also { presentOptions.add("rm") }
 
                 return when {
-                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(PointCommand.PointTagCommand.commandDefinition.commandName))
-                    presentOptions.size > 1 -> ParseResult.ParseError(ExclusiveOptions(commandDefinition.commandName, presentOptions))
-                    else -> ParseResult.ParseSuccess(SectionTagCommand(show, tagsToAdd, tagsToRemove))
+                    presentOptions.size > 1 -> ParseError(ExclusiveOptions(commandDefinition.commandName, presentOptions))
+                    show != null -> ParseSuccess(SectionShowTagsCommand)
+                    tagsToAdd != null -> ParseSuccess(SectionAddTagsCommand(tagsToAdd))
+                    tagsToRemove != null -> ParseSuccess(SectionRemoveTagsCommand(tagsToRemove))
+                    else -> ParseError(NoOptions(commandDefinition.commandName))
                 }
             }
         }
     }
+
+    data object SectionShowTagsCommand : SectionTagCommand()
+    data class SectionAddTagsCommand(val tagsToAdd: List<Tag>) : SectionTagCommand()
+    data class SectionRemoveTagsCommand(val tagsToRemove: List<Tag>) : SectionTagCommand()
 
     data class SectionSetCommand(val name: Name?, val color: Color?, val tags: List<Tag>?) : SectionCommand {
 
@@ -90,28 +98,37 @@ sealed interface SectionCommand : CommandObject {
                 val tags = arguments.getListOrNull(defTags)?.also { presentOptions.add("tag") }
 
                 return when {
-                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(PointCommand.PointSetCommand.commandDefinition.commandName))
-                    else -> ParseResult.ParseSuccess(SectionSetCommand(name, color, tags))
+                    presentOptions.isEmpty() -> ParseError(NoOptions(PointCommand.PointSetCommand.commandDefinition.commandName))
+                    else -> ParseSuccess(SectionSetCommand(name, color, tags))
                 }
             }
         }
     }
 
-    data class SectionShowCommand(val short: Boolean, val showTags: Boolean) : SectionCommand {
+    sealed class SectionGeneralShowCommand : SectionCommand {
 
-        companion object: CommandObjectParser<SectionShowCommand> {
-            val defShort = BooleanSwitchDefinition("--short", default = false, description = "Show info in concise form")
-            val defShowTags = BooleanSwitchDefinition("--with-tags", default = false, description = "Show tags of the objects")
-            override val commandDefinition = CommandDefinition("show", listOf(defShort, defShowTags),
+        companion object: CommandObjectParser<SectionGeneralShowCommand> {
+            private val defShort = BooleanSwitchDefinition("--short", default = false, description = "Show info in concise form")
+            private val defShowTags = BooleanSwitchDefinition("--with-tags", default = false, description = "Show tags of the objects")
+            private val defPointId = IntFlagDefinition("--point", description = "Shows info about specific section point")
+            override val commandDefinition = CommandDefinition("show", listOf(defShort, defShowTags, defPointId),
                 description = "Show information about the section")
 
-            override fun parse(arguments: ValueParseObject): ParseResult<out SectionShowCommand> {
+            override fun parse(arguments: ValueParseObject): ParseResult<out SectionGeneralShowCommand> {
                 val short = arguments.get(defShort)
                 val withTags = arguments.get(defShowTags)
-                return ParseResult.ParseSuccess(SectionShowCommand(short, withTags))
+                val pointId = arguments.getNullable(defPointId)?.let { Id[it] }
+
+                val command = pointId?.let { SectionShowPointCommand(it, short) }
+                    ?: SectionShowCommand(short, withTags)
+
+                return ParseSuccess(command)
             }
         }
     }
+
+    data class SectionShowCommand(val short: Boolean, val showTags: Boolean): SectionGeneralShowCommand()
+    data class SectionShowPointCommand(val pointId: Id, val short: Boolean) : SectionGeneralShowCommand()
 
     data class SectionInspectCommand(val id: Id) : SectionCommand {
 
@@ -124,11 +141,11 @@ sealed interface SectionCommand : CommandObject {
 
             override fun parse(arguments: ValueParseObject): ParseResult<out SectionInspectCommand> {
                 val pointIdStr = arguments.positionalArguments[0]
-                val id = pointIdStr.toIntOrNull() ?: return ParseResult.ParseError(CouldNotConvertId(pointIdStr))
+                val id = pointIdStr.toIntOrNull() ?: return ParseError(CouldNotConvertId(pointIdStr))
 
                 return Id[id]?.let {
-                    ParseResult.ParseSuccess(SectionInspectCommand(it))
-                } ?: ParseResult.ParseError(PointDoesNotExist(id))
+                    ParseSuccess(SectionInspectCommand(it))
+                } ?: ParseError(PointDoesNotExist(id))
             }
         }
 

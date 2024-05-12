@@ -65,8 +65,7 @@ sealed interface PointCommand: CommandObject {
         }
     }
 
-    data class PointTagCommand(val show: Boolean?, val tagsToAdd: List<Tag>?, val tagsToRemove: List<Tag>?): PointCommand {
-
+    sealed class PointTagCommand: PointCommand {
         companion object : CommandObjectParser<PointTagCommand> {
             const val commandName = "tag"
             val defShow = BooleanSwitchDefinition("--show", description = "Show tags attached to the point")
@@ -95,11 +94,18 @@ sealed interface PointCommand: CommandObject {
                 val tagsToRemove = arguments.getListOrNull(defRemoveTags)?.also { presentOptions.add("rm") }
 
                 return when {
-                    presentOptions.isEmpty() -> ParseResult.ParseError(NoOptions(commandName))
                     presentOptions.size > 1 -> ParseResult.ParseError(ExclusiveOptions(commandName, presentOptions))
-                    else -> ParseResult.ParseSuccess(PointTagCommand(show, tagsToAdd, tagsToRemove))
+                    show != null -> ParseResult.ParseSuccess(PointShowTagsCommand)
+                    tagsToAdd != null -> ParseResult.ParseSuccess(PointAddTagsCommand(tagsToAdd))
+                    tagsToRemove != null -> ParseResult.ParseSuccess(PointRemoveTagsCommand(tagsToRemove))
+                    else -> ParseResult.ParseError(NoOptions(commandName))
                 }
             }
         }
     }
+
+    data object PointShowTagsCommand : PointTagCommand()
+    data class PointAddTagsCommand(val tagsToAdd: List<Tag>) : PointTagCommand()
+    data class PointRemoveTagsCommand(val tagsToRemove: List<Tag>) : PointTagCommand()
+
 }

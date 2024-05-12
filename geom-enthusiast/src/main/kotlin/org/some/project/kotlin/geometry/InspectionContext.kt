@@ -101,30 +101,31 @@ class InspectionContext {
                 println(point.show(command.short))
             }
             is PointCommand.PointTagCommand -> {
-                require(command.show != null || command.tagsToAdd != null || command.tagsToRemove != null) {
-                    "command 'tag' for points should have at least one of its show/add/rm options set"
+                executePointTagCommand(command, point)
+            }
+        }
+    }
+
+    private fun executePointTagCommand(command: PointCommand.PointTagCommand, point: Point) {
+        when (command) {
+            PointCommand.PointShowTagsCommand -> {
+                val message = point.tags.let { it.joinToString(separator = ",") { t -> t.tag } }
+                println(message)
+            }
+            is PointCommand.PointAddTagsCommand -> {
+                val combinedTags = mutableSetOf<Tag>().apply {
+                    addAll(point.tags)
+                    addAll(command.tagsToAdd)
                 }
-                when {
-                    command.show != null -> {
-                        val message = point.tags.let { if (it.isEmpty()) "" else it.joinToString(separator = ",") { t -> t.tag } }
-                        println(message)
-                    }
-                    command.tagsToAdd != null -> {
-                        val combinedTags = mutableSetOf<Tag>().apply {
-                            addAll(point.tags)
-                            addAll(command.tagsToAdd)
-                        }
-                        point.tags = combinedTags.toList()
-                    }
-                    command.tagsToRemove != null -> {
-                        val intersection = mutableSetOf<Tag>().apply {
-                            addAll(point.tags)
-                            removeAll(command.tagsToRemove)
-                        }
-                        if (point.tags.size > intersection.size) {
-                            point.tags = intersection.toList()
-                        }
-                    }
+                point.tags = combinedTags.toList()
+            }
+            is PointCommand.PointRemoveTagsCommand -> {
+                val intersection = mutableSetOf<Tag>().apply {
+                    addAll(point.tags)
+                    removeAll(command.tagsToRemove)
+                }
+                if (point.tags.size > intersection.size) {
+                    point.tags = intersection.toList()
                 }
             }
         }
@@ -149,31 +150,7 @@ class InspectionContext {
                 println(section.color)
             }
             is SectionCommand.SectionTagCommand -> {
-                require(command.show != null || command.tagsToAdd != null || command.tagsToRemove != null) {
-                    "command 'tag' for sections should have at least one of its show/add/rm options set"
-                }
-                when {
-                    command.show != null -> {
-                        val message = section.tags.let { if (it.isEmpty()) "" else it.joinToString(separator = ",") { t -> t.tag } }
-                        println(message)
-                    }
-                    command.tagsToAdd != null -> {
-                        val combinedTags = mutableSetOf<Tag>().apply {
-                            addAll(section.tags)
-                            addAll(command.tagsToAdd)
-                        }
-                        section.tags = combinedTags.toList()
-                    }
-                    command.tagsToRemove != null -> {
-                        val intersection = mutableSetOf<Tag>().apply {
-                            addAll(section.tags)
-                            removeAll(command.tagsToRemove)
-                        }
-                        if (section.tags.size > intersection.size) {
-                            section.tags = intersection.toList()
-                        }
-                    }
-                }
+                executeSectionTagCommand(command, section)
             }
             is SectionCommand.SectionSetCommand -> {
                 command.name?.also { section.name = it }
@@ -183,11 +160,46 @@ class InspectionContext {
             is SectionCommand.SectionShowCommand -> {
                 println(section.show(short = command.short, withTags = command.showTags))
             }
+            is SectionCommand.SectionShowPointCommand -> {
+                val point = listOf(section.point1, section.point2).firstOrNull { it.id == command.pointId }
+                if (point != null) {
+                    println(point.show(short = command.short))
+                } else {
+                    println("Section does not have a point with id ${command.pointId.id}")
+                }
+            }
             is SectionCommand.SectionInspectCommand -> {
-                // TODO possible errors
-                listOf(section.point1, section.point2)
-                    .firstOrNull { it.id == command.id }
-                    ?.also { inspectedScenes.add(PointScene(it)) }
+                val point = listOf(section.point1, section.point2).firstOrNull { it.id == command.id }
+                if (point != null) {
+                    inspectedScenes.add(PointScene(point))
+                } else {
+                    println("Section does not have a point with id ${command.id.id}")
+                }
+            }
+        }
+    }
+
+    private fun executeSectionTagCommand(command: SectionCommand.SectionTagCommand, section: Section) {
+        when(command) {
+            SectionCommand.SectionShowTagsCommand -> {
+                val message = section.tags.let { it.joinToString(separator = ",") { t -> t.tag } }
+                println(message)
+            }
+            is SectionCommand.SectionAddTagsCommand -> {
+                val combinedTags = mutableSetOf<Tag>().apply {
+                    addAll(section.tags)
+                    addAll(command.tagsToAdd)
+                }
+                section.tags = combinedTags.toList()
+            }
+            is SectionCommand.SectionRemoveTagsCommand -> {
+                val intersection = mutableSetOf<Tag>().apply {
+                    addAll(section.tags)
+                    removeAll(command.tagsToRemove)
+                }
+                if (section.tags.size > intersection.size) {
+                    section.tags = intersection.toList()
+                }
             }
         }
     }
@@ -210,16 +222,8 @@ class InspectionContext {
             TriangleCommand.TriangleColorCommand -> {
                 println(triangle.color)
             }
-            is TriangleCommand.TriangleShowCommand -> {
-                if (command.sectionId != null) {
-                    //TODO possible errors
-                    listOf(triangle.side1, triangle.side2, triangle.side3)
-                        .firstOrNull { it.id == command.sectionId }
-                        ?.show(short = command.short, withTags = command.showTags)
-                        ?.also { sideView -> println(sideView) }
-                } else {
-                    println(triangle.show(short = command.short, withTags = command.showTags))
-                }
+            is TriangleCommand.TriangleGeneralShowCommand -> {
+                executeTriangleShowCommand(command, triangle)
             }
             is TriangleCommand.TriangleSetCommand -> {
                 command.name?.also { triangle.name = it }
@@ -227,10 +231,39 @@ class InspectionContext {
                 command.tags?.also { triangle.tags = it }
             }
             is TriangleCommand.TriangleInspectCommand -> {
-                // TODO possible errors
-                listOf(triangle.side1, triangle.side2, triangle.side3)
-                    .firstOrNull { it.id == command.id }
-                    ?.also { inspectedScenes.add(SectionScene(it)) }
+                val side = listOf(triangle.side1, triangle.side2, triangle.side3).firstOrNull { it.id == command.id }
+                if (side != null) {
+                    inspectedScenes.add(SectionScene(side))
+                } else {
+                    println("Triangle does not have a side with id ${command.id.id}")
+                }
+            }
+        }
+    }
+
+    private fun executeTriangleShowCommand(command: TriangleCommand.TriangleGeneralShowCommand, triangle: Triangle) {
+        when (command) {
+            is TriangleCommand.TriangleShowCommand -> {
+                println(triangle.show(short = command.short, withTags = command.showTags))
+            }
+            is TriangleCommand.TriangleShowSectionCommand -> {
+                val side = listOf(triangle.side1, triangle.side2, triangle.side3).firstOrNull { it.id == command.sideId }
+                if (side != null) {
+                    val sideView = side.show(short = command.short, withTags = command.showTags)
+                    println(sideView)
+                } else {
+                    println("Triangle does not have side with id ${command.sideId.id}")
+                }
+            }
+            is TriangleCommand.TriangleShowPointCommand -> {
+                val point = listOf(triangle.side1, triangle.side2, triangle.side3)
+                    .flatMap { listOf(it.point1, it.point2) }
+                    .firstOrNull { it.id == command.pointId }
+                if (point != null) {
+                    println(point.show(short = command.short))
+                } else {
+                    println("Triangle does not have a point with id ${command.pointId.id}")
+                }
             }
         }
     }

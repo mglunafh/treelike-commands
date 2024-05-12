@@ -21,9 +21,8 @@
 
 ----
 ## Geometry Enthusiast
-- execution errors in InspectionScope
 - remove Id registry, it's bug-inducing
-- implement triangle (tag, show --point)
+- implement triangle (tag)
 - implement rectangle
 - think about adding physical parameters to the models:
   - section length 

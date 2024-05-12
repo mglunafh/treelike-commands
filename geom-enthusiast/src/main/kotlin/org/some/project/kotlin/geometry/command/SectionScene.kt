@@ -17,7 +17,7 @@ class SectionScene(val section: Section): Scene {
             SectionCommand.SectionColorCommandParser,
             SectionCommand.SectionTagCommand,
             SectionCommand.SectionSetCommand,
-            SectionCommand.SectionShowCommand,
+            SectionCommand.SectionGeneralShowCommand,
             SectionCommand.SectionInspectCommand,
             GenericBackCommand.SectionBackCommand
         )

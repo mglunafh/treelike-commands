@@ -15,7 +15,7 @@ class TriangleScene(val triangle: Triangle) : Scene {
             TriangleCommand.TriangleIdCommandParser,
             TriangleCommand.TriangleNameCommandParser,
             TriangleCommand.TriangleColorCommandParser,
-            TriangleCommand.TriangleShowCommand,
+            TriangleCommand.TriangleShowCommandParser,
             TriangleCommand.TriangleSetCommand,
             TriangleCommand.TriangleInspectCommand,
             GenericBackCommand.TriangleBackCommand
