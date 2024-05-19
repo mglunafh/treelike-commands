@@ -1,13 +1,16 @@
 [
   {
-    "type": "@point"
+    "type": "@point",
+    "id": 1
   },
   {
     "type": "@point",
+    "id": 2,
     "name": "Slam"
   },
   {
     "type": "@point",
+    "id": 3,
     "name": "Slam_2011",
     "tags": [
       "incision",
@@ -17,11 +20,13 @@
   },
   {
     "type": "@point",
+    "id": 4,
     "name": "NEW",
     "color": "BLUE"
   },
   {
     "type": "@point",
+    "id": 5,
     "name": "Crysler",
     "color": "GREEN",
     "tags": [
@@ -32,11 +37,14 @@
   },
   {
     "type": "@section",
+    "id": 8,
     "point1": {
+      "id": 6,
       "name": "WarZone",
       "color": "RED"
     },
     "point2": {
+      "id": 7,
       "name": "Escape-From-Tarkov",
       "color": "RED"
     },
@@ -49,7 +57,9 @@
   },
   {
     "type": "@section",
+    "id": 11,
     "point1": {
+      "id": 9,
       "name": "Hots",
       "color": "BLUE",
       "tags": [
@@ -59,6 +69,7 @@
       ]
     },
     "point2": {
+      "id": 10,
       "name": "Grim-Dawn",
       "color": "RED",
       "tags": [
@@ -76,8 +87,11 @@
   },
   {
     "type": "@triangle",
+    "id": 18,
     "side1": {
+      "id": 15,
       "point1": {
+        "id": 12,
         "name": "pentose-7-9-N",
         "color": "GREEN",
         "tags": [
@@ -86,6 +100,7 @@
         ]
       },
       "point2": {
+        "id": 13,
         "name": "hexose-6-amine",
         "color": "RED",
         "tags": [
@@ -95,13 +110,34 @@
       "name": "adenine"
     },
     "side2": {
-      "point1": {},
-      "point2": {},
+      "id": 16,
+      "point1": {
+        "id": 13,
+        "name": "hexose-6-amine",
+        "color": "RED",
+        "tags": [
+          "hydrogen-bonds"
+        ]
+      },
+      "point2": {
+        "id": 14
+      },
       "name": "uracil"
     },
     "side3": {
-      "point1": {},
-      "point2": {},
+      "id": 17,
+      "point1": {
+        "id": 14
+      },
+      "point2": {
+        "id": 12,
+        "name": "pentose-7-9-N",
+        "color": "GREEN",
+        "tags": [
+          "adenosin",
+          "deoxyadenosine"
+        ]
+      },
       "name": "guanine"
     },
     "name": "Start-Codon",

@@ -117,7 +117,7 @@ sealed interface SectionCommand : CommandObject {
             override fun parse(arguments: ValueParseObject): ParseResult<out SectionGeneralShowCommand> {
                 val short = arguments.get(defShort)
                 val withTags = arguments.get(defShowTags)
-                val pointId = arguments.getNullable(defPointId)?.let { Id[it] }
+                val pointId = arguments.getNullable(defPointId)?.let { Id(it) }
 
                 val command = pointId?.let { SectionShowPointCommand(it, short) }
                     ?: SectionShowCommand(short, withTags)
@@ -142,19 +142,12 @@ sealed interface SectionCommand : CommandObject {
             override fun parse(arguments: ValueParseObject): ParseResult<out SectionInspectCommand> {
                 val pointIdStr = arguments.positionalArguments[0]
                 val id = pointIdStr.toIntOrNull() ?: return ParseError(CouldNotConvertId(pointIdStr))
-
-                return Id[id]?.let {
-                    ParseSuccess(SectionInspectCommand(it))
-                } ?: ParseError(PointDoesNotExist(id))
+                return ParseSuccess(SectionInspectCommand(Id(id)))
             }
         }
 
         data class CouldNotConvertId(val arg: String) : CustomValidationError() {
             override fun getMessage() = "Inspect: could not convert ID from '$arg'."
-        }
-
-        data class PointDoesNotExist(val id: Int) : CustomValidationError() {
-            override fun getMessage() = "Inspect: Point with ID '$id' does not exist."
         }
     }
 }

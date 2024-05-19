@@ -2,15 +2,14 @@ package org.some.project.kotlin.geometry.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import org.some.project.kotlin.geometry.model.Tag.Companion.appendTags
 
 @Serializable
 @SerialName("@section")
 data class Section(
+    override val id: Id,
     val point1: Point,
     val point2: Point,
-    @Transient override val id: Id = Id.next(),
     var name: Name? = null,
     var color: Color = Color.WHITE,
     var tags: List<Tag> = Tag.EMPTY_TAGS

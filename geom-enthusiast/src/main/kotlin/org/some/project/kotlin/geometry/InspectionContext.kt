@@ -15,7 +15,7 @@ import java.io.FileOutputStream
 
 class InspectionContext {
 
-    private var shapes: MutableList<Shape> = mutableListOf()
+    private var registry = ShapeRegistry()
 
     private val inspectedScenes: MutableList<Scene> = mutableListOf()
     private val formatter: Json
@@ -47,11 +47,10 @@ class InspectionContext {
     private fun overviewAction(command: OverviewCommand) {
         when (command) {
             is OverviewCreateCommand -> {
-                val shape = Shape.create(command.fig)
-                shapes.add(shape)
+                registry.create(command.fig)
             }
             is OverviewInspectCommand -> {
-                val shape = shapes.firstOrNull { it.id == command.id }
+                val shape = registry[command.id]
                 shape?.also {
                     val scene = when (it.type) {
                         ShapeType.POINT -> PointScene(it as Point)
@@ -63,16 +62,18 @@ class InspectionContext {
                 }
             }
             OverviewListCommand -> {
-                shapes.forEach { println(it.show()) }
+                registry.shapes.forEach { println(it.show()) }
             }
             is OverviewLoadCommand -> {
-                shapes = FileInputStream(command.filename).use {
+                val shapes = FileInputStream(command.filename).use {
                     formatter.decodeFromStream<MutableList<Shape>>(it)
                 }
+                registry = ShapeRegistry()
+                registry.upload(shapes)
             }
             is OverviewSaveCommand -> {
                 FileOutputStream(command.filename).use {
-                    formatter.encodeToStream(shapes, it)
+                    formatter.encodeToStream(registry.shapes, it)
                 }
             }
         }

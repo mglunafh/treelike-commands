@@ -41,19 +41,12 @@ sealed interface OverviewCommand: CommandObject {
             override fun parse(arguments: ValueParseObject): ParseResult<OverviewInspectCommand> {
                 val idString = arguments.positionalArguments[0]
                 val id = idString.toIntOrNull() ?: return ParseResult.ParseError(CouldNotConvertId(idString))
-
-                return Id[id]?.let {
-                    ParseResult.ParseSuccess(OverviewInspectCommand(it))
-                } ?: ParseResult.ParseError(FigureDoesNotExist(id))
+                return ParseResult.ParseSuccess(OverviewInspectCommand(Id(id)))
             }
         }
 
         data class CouldNotConvertId(val arg: String) : CustomValidationError() {
             override fun getMessage() = "Inspect: could not convert ID from '$arg'."
-        }
-
-        data class FigureDoesNotExist(val id: Int) : CustomValidationError() {
-            override fun getMessage() = "Inspect: Figure with ID '$id' does not exist."
         }
     }
 

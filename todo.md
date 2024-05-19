@@ -21,7 +21,6 @@
 
 ----
 ## Geometry Enthusiast
-- remove Id registry, it's bug-inducing
 - implement triangle (tag)
 - implement rectangle
 - think about adding physical parameters to the models:

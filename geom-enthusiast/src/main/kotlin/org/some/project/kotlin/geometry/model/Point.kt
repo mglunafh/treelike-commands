@@ -2,13 +2,12 @@ package org.some.project.kotlin.geometry.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import org.some.project.kotlin.geometry.model.Tag.Companion.appendTags
 
 @Serializable
 @SerialName("@point")
 data class Point(
-    @Transient override val id: Id = Id.next(),
+    override val id: Id,
     var name: Name? = null,
     var color: Color = Color.WHITE,
     var tags: List<Tag> = Tag.EMPTY_TAGS

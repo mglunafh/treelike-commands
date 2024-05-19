@@ -48,8 +48,8 @@ sealed interface TriangleCommand : CommandObject {
         override fun parse(arguments: ValueParseObject): ParseResult<out TriangleGeneralShowCommand> {
             val short = arguments.get(defShort)
             val withTags = arguments.get(defShowTags)
-            val sectionId = arguments.getNullable(defSectionId)?.let { Id[it] }
-            val pointId = arguments.getNullable(defPointId)?.let { Id[it] }
+            val sectionId = arguments.getNullable(defSectionId)?.let { Id(it) }
+            val pointId = arguments.getNullable(defPointId)?.let { Id(it) }
 
             return when {
                 sectionId != null && pointId != null -> ParseError(ExclusiveOptions(commandDefinition.commandName, listOf(defSectionId.name, defPointId.name)))
@@ -104,20 +104,12 @@ sealed interface TriangleCommand : CommandObject {
             override fun parse(arguments: ValueParseObject): ParseResult<out TriangleInspectCommand> {
                 val pointIdStr = arguments.positionalArguments[0]
                 val id = pointIdStr.toIntOrNull() ?: return ParseError(CouldNotConvertId(pointIdStr))
-
-                return Id[id]?.let {
-                    ParseSuccess(TriangleInspectCommand(it))
-                } ?: ParseError(SectionDoesNotExist(id))
+                return ParseSuccess(TriangleInspectCommand(Id(id)))
             }
 
             data class CouldNotConvertId(val arg: String) : CustomValidationError() {
                 override fun getMessage() = "Inspect: could not convert ID from '$arg'."
             }
-
-            data class SectionDoesNotExist(val id: Int) : CustomValidationError() {
-                override fun getMessage() = "Inspect: Section with ID '$id' does not exist."
-            }
-
         }
     }
 }
