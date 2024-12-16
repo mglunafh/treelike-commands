@@ -2,11 +2,10 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     application
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 val projectVersion: String by project
-val jacksonVersion: String by project
 
 group = "org.some.project.kotlin"
 version = projectVersion

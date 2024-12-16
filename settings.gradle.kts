@@ -1,9 +1,9 @@
 pluginManagement {
     plugins {
-        kotlin("jvm") version "1.9.22"
-        kotlin("plugin.serialization") version "1.9.22"
+        kotlin("jvm") version "1.9.22" apply false
+        kotlin("plugin.serialization") version "1.9.22" apply false
         application
-        id("com.github.johnrengelman.shadow") version "7.1.2"
+        id("com.gradleup.shadow") version "8.3.3" apply false
     }
 }
 
